@@ -24,7 +24,7 @@ main() {
 	int row,col;/*counters */
 	int v; 
 	
-	img1=ifspin("infile.ifs");/*read in file by this name */
+	img1=ifspin("druze_star.png");/*read in file by this name */
 	len[0]=2;/*image to be created is two dimensional */
 	len[1]=128;/*image has 128 columns */
 	len[2]=128;/*image has 128 rows */
