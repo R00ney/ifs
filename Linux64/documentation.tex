@@ -1,0 +1,2519 @@
+\begin{ifsdoc}[InterpolateTriangle]
+3.1.4
+Given three points in an input image, and a corresponding 3 points in an output image, the second triangle will be deformed and filled in to match the first. 
+Usage: int status = InterpolateTriangle (IFSIMG inimg,IFSIMG outimg,double **X,double **U,int IG);
+X and U are matrices created using the function dmatrix. IG is a switch which, if nonzero, will result in sub-pixel interpolation. (At the time of this writing, this feature is not implemented.) The matrix manipulation functions are in the flip library. See section 2.2.2. If the input image is three-dimensional and has three frames, it will be treated as color. Three dimensional images are interpolated only in a 2D sense.
+EXAMPLE:
+double **X, **Y;
+X=dmatrix(1,2,1,3); 	// X is a matrix with rows numbered
+			//from 1 to 2 and columns numbered from 1 to 3.
+U=dmatrix(1,2,1,3);
+X[1][1] =0; X[2][1] = 0; 	// one corner of undistorted image
+U[1][1] =0; U[2][1] =0;		// this point is not moved
+X[1][2] =0; X[2][2] = 10; 	// second corner of triangle, ten units to right of previous
+U[1][2] =0; U[2][2] =10; 	// this point is not distorted
+X[1][3] =10; X[2][3] = 5; 	// third corner of triangle, ten units down
+				//and 5 units over from first
+U[1][3] =15; U[2][3] =10; 	// this point is moved, stretching
+				// the triangle up and to the right
+InterpolateTriange(inputimge, outputimage,X,U,0);
+\end{ifsdoc} 
+
+\begin{ifsdoc}[ifsv]
+View ifs image
+
+8.1 ifsv
+The program ifsv can view any type of 2D or 3D ifs image, or any 2D image of type jpeg, tiff, or png.
+It can perform data type converstion by using saveas. It also runs on most platforms. 
+Internally, it uses floating point operations, so images with any brightness range can be viewed.
+
+Note: ifsv is intended as a tool for the person writing image analysis software. 
+It allows the user to interrogate details of imges, and make specific, controlled 
+modifications to the image. It is not intended as a replacement for Photoshop. 
+If you need Photoshop, use Photoshop.
+
+The program operates with two displays, the primary image, displayed in the primary window, 
+and the secondary image displayed in the secondary window. When an image is loaded, 
+it will be displayed in both windows. This may be modified by a number of buttons and features 
+discussed below. First, the options available under the menu bar are discussed.
+
+8.1.1 Under FILE menu
+
+open 
+This function allows the user to select a file for display 
+using a file menu. The file will be read and displayed in both windows. 
+The data type will be reported, as well as number of 
+frames (if 3d), rows, and columns. The report will also include 
+minimum, maximum, mean, and variance of pixel brightness. 
+Both the primary and secondary images will be stored in floating point.
+
+reopen 
+Open both copies of the last image read. 
+This is useful if operations have been applied to the second window. 
+If the user has displayed an image in the past and then exited ifsv. 
+The last image will be remembered and can be accessed by reopen 
+after starting up ifsv again.
+
+saveas 
+This function allows the user to save the secondary image in any 
+of a wide variety of formats. The format is chosen by the name of 
+the target file. For example naming a file foo.jpg will save the image 
+as a jpeg image. If the user selects .ifs, then he/she will be prompted 
+to choose an ifs data format, such as byte, ubyte, char, uchar, u8bit, 
+short, ushort, u16bit, int, float 32flt, double, 64flt. Note: the current 
+release does not support complex data types. A complete list is in 
+section 1.2 of the ifs manual.
+
+image profile
+ After choosing image profile, the user may move the pointer to the main 
+ window, click and hold the left mouse button. Moving the mouse will draw 
+ a red overlay on the main window. Upon mouse release, the brightness 
+ profile of the curve drawn will be shown at the bottom of the secondary window.
+ 
+window and level 
+ This is a brightness enhancement function. A new window is popped 
+ up with two sliders on it. The image in the primary window will be displayed. 
+ The sliders control two thresholds, lower and upper. Any pixel 
+ with a brightness below the lower will be set to black, any with a 
+ brightness above the upper threshold will be set to white. 
+ All brightness between the two are scaled to lie proportionally 
+ between black and white. IMPORTANT: Running window-level 
+ does not change either the priimary or secondary images. 
+ It is a display-only function.
+ 
+script 
+If the user has a script which can perform operations on an image, 
+he/she may run this script inside ifsv by using this button. The user 
+is prompted to choose a script. The primary image will be written to 
+the same directory the script is in. The file name will be ImgViewTempInput.ifs, 
+and it will be written in the same directory as the selected script. The 
+script will then be run. If the script runs successfully, it should write its 
+output to a file named ImgViewTempOutput.ifs. 
+That image will then be read in to ifsv.
+
+rerun script 
+This function allows the user to run the same script again, 
+perhaps on another image.
+
+8.1.2 Under the Enhancement Pulldown
+The enhancement functions modify the appearance of the 
+stored images, but not the images themselves.
+
+Convert to Monochrome
+ 
+This function will create a monochrome image from the 
+color image in the primary window and store the monochrome 
+image as the secrondary window. If the primary image is already 
+monochrome, no change will occur.
+
+Increase Brightness
+
+ This function will modify the appearance of the secondary image 
+ by increasing the displayed brightness. Only the displayed image 
+ is changed. both the primary and secondary images are unchanged.
+
+Decrease Brightness
+
+ This function will modify the appearance of the secondary image 
+ by decreasing the displayed brightness. Only the displayed image 
+ is changed. both the primary and secondary images are unchanged.
+ 
+ Increase Warmness 
+ 
+ This function will modify the appearance of the secondary image 
+ by increasing the ÒwarmnessÓ of the displayed image. Only the 
+ displayed image is changed. both the primary and secondary images 
+ are unchanged.
+ 
+Decrease Warmness 
+
+ This function will modify the appearance of the secondary image 
+ by decreasing the ÒwarmnessÓ of the displayed image. Only the 
+ displayed image is changed. both the primary and secondary 
+ images are unchanged.
+ 
+Increase Coldness 
+
+ This function will modify the appearance of the secondary image 
+ by increasing the ÒcoldnessÓ of the displayed image. Only the 
+ displayed image is changed. both the primary and secondary 
+ images are unchanged.
+ 
+Decrease Coldness 
+
+ This function will modify the appearance of the secondary image 
+ by decreasing the ÒcoldnessÓ of the displayed image. Only the 
+ displayed image is changed. both the primary and secondary 
+ images are unchanged.
+ 
+8.1.3 Under the Zoom Pulldown
+ 
+The zoom functions change the appearance of the stored images, 
+but not the images themselves.
+
+zoom in 
+
+ Selecting zoom in will zoom the displayed secondary window up by 25%.
+It can be done quickly using the keyboard shortcut of apple-plus or control-plus.
+
+zoom out 
+
+ Selecting zoom out will zoom the displayed secondary window down by 25%.
+It can be done quickly using the keyboard shortcut of apple-minus or control-minus.
+
+Normal size 
+
+ Selecting normal size will display the primary window in its normal size. 
+ Fit to window 
+ Selecting Fit to window modifies the displayed primary image to fit the
+window. This may involve distorting the geometry of that image.
+ 
+8.1.4 Under Unary Operations Pulldown
+ 
+The unary operations pulldown gives the user a selection of functions to 
+apply to the primary image. These operations operate on the primary image, 
+and are stored in the secondary image (unless the operate on current 
+button is pressed. See below). Be aware that the Histogram Equalization 
+operation may take noticeable time.
+
+ 8.1.5 Under the Misc. Operations Pulldown
+ 
+At the time of this writing, the only operation available is threshold. 
+
+threshold
+
+Upon selection, a slider will appear, and the user may select a threshold to 
+choose to threshold the image.
+ 
+8.1.6 Buttons and sliders
+ 
+Initially, the user sees several buttons on the upper right of the primary window.
+ 
+ operate on 
+ 
+The two buttons Operate on Primary and Operate on Secondary 
+control the input to unary operations. The output always goes to the secondary 
+image. bug note: not all functions check if these buttons are pushed.
+
+Display 3d images checkbox 
+Normally if one has a color image, one would like to see a color image, 
+and that will happen if this box is checked. If, however, the user wishes 
+to see the red, green, and blue images separately, unchecking this box 
+before selecting a file will cause the file to be read and stored as a stack 
+of grayscale images. Note that this is not limited to 3 images, but will also 
+load 3D images such as CAT scans. The displayed image is selected with 
+the up/down selector at the bottom of the control panel window.
+\end{ifsdoc}
+
+\begin{ifsdoc}[ifs_WaterShed]
+3.1.9
+A watershed is the boundary between two basins.
+Usage: int ifs_WaterShed(IFSIMG im,IFSIMG om);
+Both images must be ifs images of type int. The output image is a segmented version of the input image. It will contain uniquely labeled regions. WaterShed points will have brightness zero. Note that although watershed pixels are in principal the boundaries of basins, they are not necessarliy a single pixel thick. The WaterShed program (see section ??) adds additional features by erasing watershed pixels and assigning them to regions. The WaterShed program also provides the user with the ability to pseudocolor the output image.
+\end{ifsdoc} 
+\begin{ifsdoc}[ifsalc]
+1.4.2
+Allocates storage (memory)
+Usage: char *cptr=ifsalc(int NumBytes); 
+ifsalc is an IFS function used to allocate storage in main memory such as for storing arrays and image headers. The storage will be initialized to all zeroes. It is essentially just a call to the system function calloc; the only difference being that ifsalc performs a small
+amount of error checking. If the system cannot allocate the requested amount of storage, then ifsalc will return the value NULL, and the external variable ifserr will be set to the value IFSENOMEM. If the external variable IFSSLV is not set to the value IFSQUIET, then ifsalc will write an error message to stderr if it cant allocate the requested space. If IFSSLV is set to IFSFATAL, then ifsalc will also abort your program upon an error.
+\end{ifsdoc}
+\begin{ifsdoc}[cfft2D]
+3.1.11
+Ifscfftt2d performs an in-place 2-D fast Fourier transform on a complex ifs image.
+Usage: len = cfft2d(IFSHDR *img_ptr, int type);
+The transform is performed in place on 8BYTE-PER-PIXEL (complex float) data only! Note that ffts only work on images of dimension 2nx2n . The second argument is an indicator for forward or inverse fft, -1 for forward, +1 for inverse. If there is some error, the subroutine exits to the user with an error message. Possible errors are:
+-Image dimensions are not a power of two
+-Image data type is not complex float
+\end{ifsdoc} 
+\begin{ifsdoc}[ifscfgp]
+1.4.7
+Gets value of a pixel in a 2-d image. 
+Usage: val = (double) ifscfgp(IFSHDR *ptri,int row,int col);
+row and col refer to coordinates (in pixels) of pixel to examine.
+ifscfgp returns (as a float) the value of the pixel at a specified coordinate in a 2-d image. If image is complex format, returns the imaginary portion of the number. Known bugs, special notes:
+-This routine does not check to see if the specified coordinates actually are in bounds.
+-If the pixel value won't fit in a double results are undefined. Maybe you get garbage, maybe your program aborts on an overflow type of error. There could be possible round off errors.
+\end{ifsdoc}
+\begin{ifsdoc}[ifscfgp3d]
+1.4.8
+Gets value of a pixel in a 3-d image 
+Usage: val = (double) ifscfgp3d(IFSHDR *ptri,int frame,int row,int col);
+frame, row and col refer to coordinates (in pixels) of pixel to examine.
+ifscfgp3d returns (as a double) the value of the pixel at a specified coordinate in a 3-d image. If image is complex format, returns the imaginary portion of the number. Known bugs, special notes:
+-This routine does not check to see if the specified coordinates actually are in bounds.
+-If the pixel value wont fit in a double results are undefined. Maybe you get garbage, maybe your program aborts on an overflow type of error. There could be possible round off errors.
+\end{ifsdoc}
+\begin{ifsdoc}[ifscfpp]
+1.4.9
+Sets value of a pixel in a 2-d image. 
+Usage: int status = ifscfpp(IFSHDR *ptri,int x,int y,double val);
+x and y refer to coordinates (in pixels) of pixel to examine.
+val is the value to stuff.
+Returns: IFSSUCCESS or IFSFAILURE
+ifscfpp sets the value of the pixel at a specified coordinate in a 2-d image, where the input is a float. If image is complex format, stuffs the imaginary portion of the number. Known Bugs, Special notes:
+-This routine does not check to see if the specified coordinates actually are in bounds.
+-If the value stored wont fit in the output image datatype, then results are undefined. Maybe you get garbage, maybe your program aborts on an overflow.
+\end{ifsdoc}
+\begin{ifsdoc}[ifscfpp3d]
+1.4.10
+Sets the value of a pixel in a 3-d image (This is a completely new version of ifsfpp which handles 3-d images.) 
+Usage: int status = ifscfpp3d(IFSHDR *ptri,int frame,int row,int col,double val);
+frame, row and col refer to coordinates (in pixels) of pixel to examine.
+val is the value to stuff.
+Returns: IFSSUCCESS or IFSFAILURE 
+ifscfpp3d sets the value of the pixel at a specified coordinate in a 3-d image, where the input is a float. If image is complex format,
+stuffs the imaginary portion of the number. Known Bugs, Special notes:
+-This routine does not check to see if the specified coordinates actually are in bounds.
+-If the value stuffed wont fit in the output image datatype, then results are undefined. Maybe you get garbage, maybe your program aborts on an overflow type of error.
+\end{ifsdoc}
+\begin{ifsdoc}[chainHull_2D]
+3.1.1
+Finds the convex hull of a set of 2D points. The set is an array of structures of type Point. Where Point is defined by typedef struct float x, float y Point; 
+Usage: int count = chainHull_2d(Point *S, int n, Point *H);
+count is an integer, the number of points in the convex hull (cannot be more than n). n in the number of points in the input data set, S is the array of input points and H will be filled in by the subroutine, the points in the convex hull. 
+
+This software was copied from freeware: http://softsurfer.com/Archive/algorithm 0109/algorithm 0109.htm#chainHull 2D%28%29
+
+Note: the x,y pairs must be sorted on x, smallest first. If two pairs have the same x coordinate, then those need to be sorted by y. You can use the Unix sort program if that is convenient, or any of a large selection of sort subroutines.
+\end{ifsdoc} 
+\begin{ifsdoc}[ifscigp]
+1.4.3
+Gets pixel value from a 2-d (possibly complex) image. 
+Usage: int val = int ifscigp(IFSHRD *ptri,int row,int col) 
+*ptri is the pointer to image header structure.
+row and col refer to coordinates (in pixels) of pixel to examine.
+Returns (as an integer) the value of the pixel at a specified coordinate in a 2-d image. If image is complex format, returns the imaginary portion of the number. Known Bugs, Special notes:
+-This routine does not check to see if the specified coordinates actually are in bounds.
+-If the pixel value wont fit in an int for example, a large number in a float or complex image ,then results are undefined. Maybe you get garbage, maybe your program aborts on an overflow type of error.
+\end{ifsdoc}
+\begin{ifsdoc}[ifscigp3d]
+1.4.4
+Gets pixel value from a 3d-dimage 
+Usage: int val =int ifscigp3d(IFSHDR *ptri,int frame,int row,int col);
+*ptri is the pointer to image header structure.
+frame, row and col refer to coordinates (in pixels) of pixel to examine.
+Ifscigp3d returns (as an integer) the value of the pixel at a specified coordinate in a 3-d image. If image is complex format, returns the imaginary portion of the number assuming it can be converted to an int. Known Bugs, Special notes:
+-This routine does not check to see if the specified coordinates actually are in bounds.
+-If the pixel value wont fit in an int for example, a large number in a float or complex image then results are undefined. Maybe you get garbage, maybe your program aborts on an overflow type of error.
+\end{ifsdoc}
+\begin{ifsdoc}[ifscipp]
+1.4.5
+Sets pixel value in a 2-d image 
+Usage: int status = ifscipp(IFSHDR *ptri,int x,int y,int val);
+IFSHDR *ptri; /*pointer to image headers tructure*/
+x and y refer to coordinates (in pixels) of pixel to examine.
+Returns: IFSSUCCESS or IFSFAILURE
+ifscipp sets the value of the pixel at a specified coordinate in a 2-d image, where the input is an int. If image is complex format, stuffs the imaginary portion of the number, and DOES NOT set the real part to zero. Known Bugs, Special notes:
+-This routine does not check to see if the specified coordinates actually are in bounds.
+-If the pixel value wont fit in an int for example, a large number in a float or complex image then results are undefined. Maybe you get garbage, maybe your program aborts on an overflow type of error.
+\end{ifsdoc}
+\begin{ifsdoc}[ifscipp3d]
+1.4.6
+Sets pixel in a 3-d image 
+Usage: int status = ifscipp3d(IFSHDR *ptri,int frame,int row,int col,int val);
+frame, row and col refer to coordinates (in pixels) of pixel to examine.
+Returns: IFSSUCCESS or IFSFAILURE
+ifscipp sets the value of the pixel at a specified coordinate in a 2-d image, where the input is a int. If image is complex format, stuffs the imaginary portion of the number, and DOES NOT set the real part to zero. Known bugs, special notes:
+-This routine does not check to see if the specified coordinates actually are in bounds.
+-If the value stored wont fit in the output image datatype, then results are undefined. Maybe you get garbage, maybe your program aborts on an overflow type of error.
+\end{ifsdoc}
+\begin{ifsdoc}[ifsclose]
+1.4.11
+Closes an open file. 
+Usage: int rc = ifsClose(FILE *File);
+ifsclose, an ifs internal function seldom used by typical programmers, is identical to the standard I/O library function fclose, except that it will avoid closing File if File corresponds to stdin, stdout, or stderr. If File is NULL, ifsclose returns -1, else it just returns whatever
+value fclose would return. ifsclose is supplied as a complement to ifsOpen since the latter function may return stdin or stdout in some circumstances, and the user typically does not want to close these files.
+\end{ifsdoc}
+\begin{ifsdoc}[ifscreate]
+1.4.12
+Creates an IFS image. 
+Usage: IFSHDR *img = ifscreate(char *type,int[] len,int flags,int structsize);
+ifscreate is used to create a new IFS image or image header. Space for the header is automatically allocated, and a pointer to the header is returned. Various fields in the header structure will be set to default values. Space for the actual data may also be allocated, depending on the value of the flags variable. If space for the data array is allocated, it will be filled with zeros. If the image can not be created, ifscreate returns the value NULL, and the external variable ifserr will be set to some error code, as given in the #include file ifserr.h . The image as created will not have any tail structure associated with it. The arguments to ifscreate are:
+-type: The data format for individual pixels, such as byte or double. The valid data types are listed in a later section of this manual. If the data type is not recognized by IFS, then ifscreate will return NULL, and ifserr will be set to the code IFSE BAD DTYPE.
+-len: An n+1-length integer array the first element (len[0]) gives the number of dimensions for the image, the remaining elements give the length for each dimension of the image being created. This is in exactly the same format as the arrays returned by the function ifssiz. The lengths are given in terms of ascending rank for the image. Images are stored in standard C storage order: the column or x index changes most
+rapidly when scanning through memory, hence this dimension has rank 1. The row or y index has rank 2, the frame or z index has rank 3, and so on. I.e., the second element of the array (len[1]) gives the number of columns of the image, len[2] is the number of rows, etc.
+-flags: The various bits of this argument determine precisely what is and is not allocated when generating the image. If flags = IFS CR ALL or IFS CR DATA, then storage space for the image is allocated, as well as storage for the image header. In this case the field img->ifsptr points to the data storage. If flags = IFS CR HDR then only space for the image header is allocated. The field img->ifsptr will be set to NULL. The user must supply an array to store the image in, and set img->ifsptr to point to this array. Note: versions 4.0, 5.0, and 6 of ifscreate will ALWAYS allocate space for the image header; the flag IFS CR HDR is not really examined, and is only intended for possible future expansion. All that is really checked is the IFS CR DATA bit. The flag IFS CR ALL is the combination of IFS CR DATA and IFS CR HDR and is probably the best flag to use if one wants data space allocated. 
+-structsize: This argument is only needed if type is struct, in which case it gives the size of a single data element (structure) in bytes. If type is not struct this argument should be set to 0. 
+EXAMPLE:
+/* Create a 2-d image with 20 rows and 30 columns */ 
+/* and a 1-d array of 10 structures*/
+#include <ifs.h>
+main()
+{ IFSHDR * img, * strimg; 
+int lengths[3]; IFSHDR * ifscreate();
+typedef struct { int red; int green; int blue; } RGB; . . . /* create 2D byte array */
+lengths[0] = 2; /* Image will be 2D */
+lengths[1] = 30; /* Number of columns (width; x-dimension) */
+lengths[2] = 20; /* Number of rows (height; y-dimension) */
+img = ifscreate("ubyte", lengths, IFS_CR_ALL);
+if (img == NULL) { /* error processing code */
+} . . . /* create 1D structure array */ lengths[0] = 1;
+lengths[1] = 10;
+strimg = ifscreate("struct",lengths,IFS_CR_ALL,sizeof(RGB)); . .
+\end{ifsdoc}
+\begin{ifsdoc}[cubic_int]
+3.1.5
+Usage: void cubic_int(int n,int m,float* f, float* t, float* fn, float* tn)
+n is the number of points in the input arrays (f and t), m is the number of points in the output arrays (fn and tn) both the time arrays, t and tn must be initialized
+EXAMPLE INITIALIZATION:
+//initialize t
+for(i=0;i<N;i++){
+f[i]=sin(2*3.14*i/(float)(N-1));
+t[i]=(float)i;
+}
+//initialize tn
+stepsize=(N-1)/(float)(M-1);
+for(i=0;i<M;i++){
+tn[i]=t[0]+i*stepsize;
+fn[i]=0.0;
+}
+
+void cubic_int(int n,int m,float *f ,float *t ,float *fn ,float *tn );
+\end{ifsdoc}
+\begin{ifsdoc}[compute_curvature]
+3.1.2
+Given a set of x,y pairs, computes the curvature at every point. 
+Usage: compute_curvature(struct point_xy parray[],int grid_spacing, int num_elems, double curvature[]);
+The structure points is simply an x,y, pair defined as follows:
+struct point_xy {
+int x,
+int y
+};
+The user should declare an array of these structures. num elems is the number of elements in this array. grid spacing is the pixel width; almost always set to 1. This would be changed only if the pixels are not square. curvature[] is an array of curvatures found by this program.
+\end{ifsdoc}
+\begin{ifsdoc}[ifsdimen]
+1.4.20
+Gets size of dimension
+Usage: int len = ifsdimen(IFSHRD *image,int n);
+ifsdimen returns the length (number of elements) of the nth dimension of image. It also may be used to get the total number of elements or bytes required by the data section of an image. The argument n is the rank of the dimension being queried, i.e., ifsdimen(img,0) is
+the number of columns, ifsdimen(img,1) is the number of rows, and so on. If n is specified as -1, ifsdimen returns the total number of elements in the image (the product of all the individual dimension lengths). If n is specified as -2, ifsdimen returns the total number of
+bytes occupied by the image data, i.e., the total number of elements times the size in bytes for a single element. If there is some error, ifsdimen returns zero and sets the external variable ifserr appropriately. Possible error conditions are IFSE BAD HEADER or IFSE
+NULL HEADER for invalid images, or IFSE WRONG NDIM if n is invalid (such as asking for the number of frames for a 2D image).
+\end{ifsdoc}
+\begin{ifsdoc}[ifsexwin]
+1.4.21
+Extracts a window from an image 
+Usage: IFSHDR *new = ifsexwin(IFSHDR *old,int r1,int c1,int r2,int c2);
+ifsexwin is used to create a new image which is a subimage of some old image The old image must be a two-dimensional image. The arguments r1,c1 and r2,c2 give the row and column positions of the corners of a box which defines the region to be extracted. These corners must be on opposite ends of a diagonal for the window It does not matter which corners are chosen for each point, as long as as they are on opposite ends of a box diagonal. The region extracted includes the area of the bounding box itself, ie, is inclusive of the rows r1, r2 and columns c1, c2. ifsexwin returns a pointer to the newly created image, or NULL if some error occurred. In the latter case, the external variable ifserr will be set to indicate the nature of the error. Possibilities are:
+-IFSE BAD HDR If the pointer old does not point to a valid IFS image.
+-IFSE NO MEM If space couldnt be allocated for the new image.
+-IFSE WRONG NDIM If the original image is not two-dimensional.
+-IFSE BAD POS If either of the box coordinates is outside the image dimensions.
+The dimensionality of windowed image is consistent. That is, a 1-d/2-d slice ( a 3-d image one voxel thick in one or more dimensions) returns with a header consistent with the actual dimensionality.)
+\end{ifsdoc}
+\begin{ifsdoc}[ifsexwin3d]
+1.4.22
+Extracts a window from an image 
+Usage: IFSHDR *newimg = ifsexwin3d(IFSHDR *oldimg,int f1,int r1,int c1,int f2,int r2,int c2);
+The arguments f1,r1,c1 and f2,r2,c2 are the coordinates (frame,row,col) of one corner of the box and the opposite (diagonal) corner. It doesnt matter which corners are chosen.The box which is extracted includes the bordering surface (i.e, coordinates are f1,r1,c1 to f2,r2,c2 INCLUSIVE). 
+Returns: This function returns NULL if an error occurs, and returns an error code thru the external variable ifserr. 
+External variables: ifserr, IFSSLV ifsexwin3d extracts a piece (window) out of a 3-d IFS image, to make a new IFS image. The data type of the new image is identical to that of the old one. The dimensionality of windowed image is consistent. That is, a 1-d/2-d slice ( a 3-d image one voxel thick in one or more dimensions) returns with a header consistent with the actual dimensionality.
+\end{ifsdoc}
+\begin{ifsdoc}[ifsfgp]
+1.4.23
+Gets pixel from a 2-D image 
+Usage: double value = ifsfgp(IFSHDR *img,int row,int col);
+ifsfgp is used to get the value of some pixel in a 2-dimensional image. The value returned is of type double, regardless of what the data format of the image is. Otherwise, ifsfgp is identical to the function ifsigp, in all respects. See the documentation for ifsigp for more
+details.
+\end{ifsdoc}
+\begin{ifsdoc}[ifsfgp3d]
+1.4.24
+Gets the value of a pixel in a 3-d image (A generic multidimensional fgp can be attempted thru variable parameter passing, but that would make the code unportable.)
+Usage: double val = ifsfgp3d(IFSHDR *ptri,int frame,int row,int col);
+frame, row and col refer to coordinates (in pixels) of pixel to examine.
+ifsfgp3d returns (as a double) the value of the pixel at a specified coordinate in a 3-d image. If image is complex format, returns the real portion of the number. Known Bugs, Special notes:
+-This routine does not check to see if the specified coordinates actually are in bounds.
+-If the pixel value wont fit in a double then results are undefined. Maybe you get garbage, maybe your program aborts on an overflow type of error. Round off error can occur in conversions. e.g. int to double typecasting.
+\end{ifsdoc}
+\begin{ifsdoc}[ifsfpp]
+1.4.26
+Puts pixel value into a 2-D image.
+Usage: int status = ifsfpp(IFSHDR *img,int row,int col,double value);
+ifsfpp3d sets the value of the pixel at a specified coordinate in a 3-d image, where the input is a float. If image is complex format, stuffs
+the real portion of the number. Known Bugs, Special notes:
+-This routine does not check to see if the specified coordinates actually are in bounds.
+-If the value stuffed wont fit in the output image datatype, then results are undefined. Maybe you get garbage, maybe your program aborts on an overflow type of error.
+\end{ifsdoc}
+\begin{ifsdoc}[ifsfpp3d]
+1.4.25
+Sets the value of a pixel in a 3-d image usage:
+Usage: int status = ifsfpp3d(IFSHDR *ptri,int frame,int row,int col,int val);
+frame, row and col refer to coordinates (in pixels) of pixel to examine.
+Returns: IFSSUCCESS or IFSFAILURE
+ifsfpp3d sets the value of the pixel at a specified coordinate in a 3-d image, where the input is a float. If image is "complex" format, stuffs the real portion of the number. Known Bugs, Special notes:
+-This routine does not check to see if the specified coordinates actually are in bounds.
+-If the value stuffed wont fit in the output image data type, then results are undefined. Maybe you get garbage, maybe your program aborts on an overflow type of error.
+\end{ifsdoc}
+\begin{ifsdoc}[ifsfree]
+1.4.27
+Deletes and deallocates an IFS image.
+Usage: IFSHDR *img = ifsfree(IFSHDR *img, int flags);
+ifsfree is used to get rid of an IFS image which is no longer in use. The space for the header and/or data is deallocated, and returned to the operating system for other use. Basically, ifsfree just consists of several calls to the system function cfree. The arguments to ifsfree are:
+-img : A pointer to the image header structure.
+-flags : A set of flags which indicates exactly what is to be deallocated. Possibilities for the flags are:
+	-IFS FR DATA : If this flag is set, then ifsfree will deallocate the space allocated for the storage of the actual image data (if there is any), and the header field img->ifsptr will be set to NULL to show that the header no longer has any data associated with it. If there is no data associated with the header, then this flag has no effect. This will not cause any errors.
+	-IFS FR HDR : If this flag is set, then ifsfree will deallocate the space allotted for the image header. The data space is left intact. This is usually only going to be used if the user supplied his own data area for the image (perhaps a static array or somesuch).
+	-IFS FR ALL : If this flag is specified, then ifsfree will free up everything image header and data. IFS FR ALL is just the combination of IFS FR DATA and IFS FR HDR. This is probably the normal flag to set when calling ifsfree . 
+
+Ifsfree returns a pointer to the image header as it should be AFTER the desired things have been deallocated. If only the IFS FR DATA flag was specified, then ifsfree returns the original pointer value img, with the field img->ifsptr now set to NULL to show that the data array has
+been deleted. If the header structure was freed, then ifsfree returns NULL to indicate that the pointer is no longer valid. Hence it is good practice to assign the return value from ifsfree back to the original pointer value img. It is not an error to simply say ifsfree(img,IFS FR ALL) rather than img = ifsfree(img,IFS FR ALL) to get rid of an image, but the latter usage is preferable in that it will make it more obvious to any subsequent routines called (erroneously) with the argument img. Ifsfree will also return the value NULL if an error occurred. In
+this case, the external variable ifserr will be set to the appropriate error code. Possible error conditions are:
+-IFSE NULL HDR This indicates that you passed the pointer NULL for the argument img.
+-IFSE BAD HDR This indicates that the pointer img does not reference a valid IFS image structure. Note that the error IFSE NULL HDR is actually a subclass of the error IFSE BAD HDR, so if you test the value (ifserr & IFSE BAD HDR), you will automatically also pick up errors of the type
+-IFSE NULL HDR
+
+BUGS (features):
+Trying to deallocate something which was not originally obtained using some standard system memory-allocation function (e.g, calloc, or the IFS routines ifsalc or ifscreate) will cause grave errors usually a program crash. This is a problem of the system allocate/deallocate routines and not ifsfree.
+\end{ifsdoc}
+\begin{ifsdoc}[gaussrand]
+3.3.1
+double gaussrand()
+Returns a Gaussian-destributed random number with standard deviation of one and mean of zero.
+\end{ifsdoc} 
+\begin{ifsdoc}[ifsGetFN]
+1.4.28
+Reads in a filename and expands it.
+Usage: Char *FileName = ifsGetFN(char *Prompt,FILE *Input);
+ifsGetFN will read in a string from the file Input (typically stdin), and expand it using the function ifsPrsFN. It returns a pointer to the name it read, or NULL if it failed. Space for the filename is dynamically allocated and may be freed (using cfree) when the user is through with it. If Input is a terminal, and Prompt is not NULL, then Prompt will be printed before the filename is read in. IfsGetFN normally delimits filenames with any control character or whitespace character and strips off any leading whitespace characters supplied in the name. Any character (including whitespace characters) may be put in a filename by prefixing it with a backslash n. This applies to leading whitespace characters as well as whitespace characters in the middle or end of the name.
+\end{ifsdoc}
+\begin{ifsdoc}[ifsGetImg]
+1.4.29
+Opens a file and reads an IFS image from it.
+Usage: IFSHDR *img = ifsGetImg(char *FileName,char *Prompt,int ReadTail);
+ifsGetImg reads an IFS image from some file FileName. If ReadTail is false (zero), then any tail information associated with the image will not be read in. It returns a pointer to the new image header, or NULL if it failed, in which case the external integer variables ifserr
+and column can be examined to determine the nature of the error. Space for the header, data, and tail is allocated dynamically, each may be freed (using cfree or ifsfree) when the user is through with it. If FileName is NULL, then the input image is read from stdin.
+If FileName is a null string (that is, FileName = ), then a filename will be read in from stdin using the routine ifsGetFN. In this case, if Prompt isnt NULL and stdin corresponds to a terminal, then the string Prompt will be printed on the terminal (actually, to stderr) before reading a name. If stdin is not attached to a terminal, such as when input is being piped in from another program, then the printing of the prompt string is suppressed. If a filename is read in from stdin, and it is (a single dash), then the image itself will be read from stdin. Filenames are expanded using ifsPrsFN, so they may contain such things as environment variable names and login id constructs.ifsGetImg works by opening the specified file and then calling ifsRdImg to do the actual work of getting the image. It then closes the file when its done (unless it read from stdin). Note that calling ifsGetImg with Filename = NULL is essentially the same as calling ifsRdImg directly. The complimentary routine to ifsGetImg is ifsPutImg.
+\end{ifsdoc}
+\begin{ifsdoc}[ifsInsert2Dinto3D]
+3.1.16
+Inserts a 2D image as a single frame into a 3D ifs image.
+Usage: int val = ifsInsert2Dinto3D (IFSIMG in,IFSIMG out,int frame);
+Returns 0 if successful, -1 if both arguments do not have same dimensions or if data type unsupported (complex double).
+CAUTION: If output is type char, values greater than 255 will be converted to char.
+\end{ifsdoc} 
+\begin{ifsdoc}[ifsadd]
+2.7.1
+Adds two ifs images, point by point out(i, j) = in1(i, j) + in2(i, j) 
+Usage: int ifsadd (IFSHDR *in1,IFSHDR *in2,IFSHDR *out);
+RETURNS 0 if successful, -1 if all three arguments do not have same dimensions, -2 if data type unsupported (complex double), -3 if one input has type complex and output is real, -4 if both inputs are real and output is complex. 
+CAUTION: if output is type char, values greater than 255 will be clipped to lie between 0 and 255. NOTES: if one image is real and the other complex, the output must be complex and the real parts of the images will be added.
+\end{ifsdoc}
+\begin{ifsdoc}[ifsany2any]
+2.7.2
+Convert any ifs image to any data type.
+Usage: int status=ifsany2any(IFSHDR *inputimage,IFSHDR *outputimage);
+RETURNS 0 if successful, -1 if both arguments do not have the same dimensions, -2 if input data type unsupported (complex), -3 if one input has type complex and output is real, -4 if input is real and output is complex, -5 if a zero occurs in the input.
+\end{ifsdoc}
+\begin{ifsdoc}[ifsc2imag]
+3.1.12
+Extracts the imaginary part of a complex ifs image, point by point. 
+Usage: int val = ifsc2imag (IMSHDR *in1,IMSHDR *out);
+Returns 0 if successful, -1 if both arguments do not have same dimensions, -2 if data type unsupported (complex double).
+CAUTION: If output is type char, values greater than 255 will be clipped to lie between 0 and 255.
+\end{ifsdoc} 
+\begin{ifsdoc}[ifsc2mag]
+3.1.13
+Returns magnitude of a complex ifs image, point by point. 
+Usage: int val = ifsc2mag (IMSHDR *in1,IMSHDR *out);
+Returns 0 if successful, -1 if both arguments do not have same dimensions, -2 if data type unsupported (complex double). 
+CAUTION: If output is type char, values greater than 255 will be truncated to 255.
+\end{ifsdoc} 
+\begin{ifsdoc}[ifsc2phase]
+3.1.14
+Returns phase of a complex ifs image, point by point. 
+Usage: int val = ifsc2phase (IMSHDR *in1,IMSHDR *out);
+Returns 0 if successful, -1 if both arguments do not have same dimensions, -2 if data type unsupported (complex double). 
+CAUTION: If output is type char, values greater than 255 will be truncated to 255.
+\end{ifsdoc} 
+\begin{ifsdoc}[ifsc2real]
+3.1.15
+Returns real part of a complex ifs image, point by point.
+Usage: int val = ifsc2real (IMSHDR *in1,IMSHDR *out);
+Returns 0 if successful, -1 if both arguments do not have same dimensions, -2 if data type unsupported (complex double). 
+CAUTION: If output is type char, values greater than 255 will be truncated to 255.
+\end{ifsdoc} 
+\begin{ifsdoc}[ifscolormap]
+3.2.1
+The function ifscolormap is similar to the program ColorMap in that it allows you to assign a number of different colors to an 8-bit, unsigned image. That is, each of the possible 256 brightness levels will be assigned a color. There are many ways to assign an R, G, and B value to a single pixel brightness. The function offers several different ways to interpret the brightnesses. 
+Usage: void ifscolormap(IFSIMG inputimage, IFSIMG outputimage, int X);
+Where inputimage is an unsigned 8 bit fs image, and X is an integer between 0 and 6 which tells the program which color map to use as follows:
+0 grey scale
+1 inverse gray scale
+2 bronson
+3 hot metal
+4 heated spectrum
+5 log
+6 random
+The input image must be unsigned 8 bit, since there are only 256 unique colors. The input image must be two-dimensional. The output file must be a 3D unsigned 8 bit ifs image, with 3 frames, with the usual interpretation that frame 0 is red, frame 1 is green, and frame 2 is blue. The function does not create this image, a pointer to it is passed by the calling function. 
+
+EXAMPLE:
+int len [4] ;
+IFSIMG inimage, outimg;
+extern void ifscolormap(IFSIMG, IFSIMG, int ) ;
+...
+len[0]=3;
+len[1]=ifsdimen(inimage,0); //get number of cols
+len[2]=ifsdimen(inimage,1); //get number of rows
+len[3]=3; //image will have 3 frames
+outimg=ifscreate("u8bit",len,IFS_CR_ALL,0);
+ifscolormap(inimg,outimg,3);// use a hotmetal color map
+...
+ifsCVpot(outimg,"myimage.png");
+...
+\end{ifsdoc}
+\begin{ifsdoc}[ifsmult]
+3.1.17
+Multiplies two ifs images, point by point.
+Usage: int ifsmult (IFSHDR *in1,IFSHDR *in2,IFSHDR *out);
+Returns 0 if successful, -1 if all three arguments do not have same dimensions, -2 if data type unsupported (complex double), -3 if one input has type complex and output is real, -4 if both inputs are real and output is complex. 
+CAUTION: If output is type char, values greater than 255 will be truncated to 255. 
+NOTES: If one image is real and the other complex, the output must be complex and the real parts of the images will be added.
+\end{ifsdoc} 
+\begin{ifsdoc}[ifsrecip]
+3.1.18
+Takes reciprocal of an ifs image, point by point 
+Usage: int ifsrecip (IFSHDR *in1,IFSHDR *out);
+Returns 0 if successful, -1 if both arguments do not have same dimensions, -2 if data type unsupported (complex double), -3 if one input has type complex and output is real, -4 if both inputs are real and output is complex. 
+CAUTION: If output is type char, values greater than 255 will be truncated to 255. 
+NOTES: If one image is real and the other complex, the output must be complex and the real parts of the images will be added.
+\end{ifsdoc} 
+\begin{ifsdoc}[ifssub]
+3.1.19
+Subtracts two ifs images, point by point. The second argument is subtracted from first. 
+Usage: int ifssub (IFSHDR *in1,IFSHDR *in2,IFSHDR *out);
+Returns 0 if successful, -1 if all three arguments do not have same dimensions, -2 if data type unsupported (complex double), -3 if one input has type complex and output is real, -4 if both inputs are real and output is complex. 
+CAUTION: if output is type char, values greater than 255 will be truncated to 255. 
+NOTES: If one image is real and the other complex, the output must be complex and the real parts of the images will be added.
+\end{ifsdoc} 
+\begin{ifsdoc}[ifsvidscale]
+3.1.20
+Converts an ifs image, of any data type, to an unsigned char ifs image. The brightness values are scaled to lie between 0 and 255. 
+Usage: int ifsvidscale (IFSHDR in1, IFSIMG out,float *minvalptr,float *maxvalptr, int switch3d);
+The two arguments minvalptr and maxvalptr are pointers to floats, and will be returned by ifsvidscale, reporting the minimum and maximum of the input images, respectively. The switch3d argument, if not ==0, indicates that the frames of the image should be scaled independently. Note that in this case, the minvalptr and maxvalptr apply only to the last frame in the sequence.
+Returns 0 if successful. The function will scale minimum brightness - maximum brightness to 0-255.
+NOTES: The second image must be unsigned char.
+EXAMPLE:
+img2=ifscreate("u8bit",len,IFS_CR_ALL,0);
+ifsvidscale(inimage, img2,&mymin,&mymax,0);
+\end{ifsdoc} 
+\begin{ifsdoc}[ifsigp]
+1.4.30
+Gets pixel from a 2-D image.
+Usage: int value = ifsigp(IFSHDR *img,int row,int col);
+ifsigp is used to get the value of some pixel in a 2-dimensional image. The value returned is of type int, regardless of what the data format of the image is. ifsigp performs all necessary type conversions. If the value of the pixel in the image will not fit into an int data type,
+then the value that is returned will be meaningless. If the image data format is one of the complex forms, then ifsigp returns the real part of the specified data point. If some sort of error occurs, then ifsigp will return zero, and the external variable ifserr will be set to
+indicate the nature of the error. 
+The arguments to ifsigp are:
+-img: A pointer to the image header structure. This should refer to a 2-dimensional image. If the image has 3 or more dimensions, then ifsigp will access the first frame of the data (ie, all indices besides the first two will simply be treated as zero).
+-row,col The coordinates of the point to be examined. Note that row, col may also be regarded as a y, x pair. Beware that row corresponds to the y index, not the x index. 
+The following error codes (defined in the #include file <ifserr.h >) may be returned by ifsigp :
+-IFSE BAD HEADER: The pointer img does not point to an actual IFS image.
+-IFSE BAD DTYPE: The image is of some data type that ifsigp does not recognize. Usually this indicates that your header has been damaged, and the field img ! ifsdt is mangled, or the image data type is struct. It could also occur if someone added a new data type to that understood by IFS, and forgot to modify ifsigp accordingly. 
+
+BUGS (features): 
+-ifsigp does not verify that the image passed to it corresponds to a 2-dimensional image.
+-The indices row, col may (depends on severity level setting) not checked to verify that they lie inside the image dimensions. ifsigp does not check to make sure that the data pointer img-/textgreaterifsptr is not NULL. Previous versions of IFS did not allow this data pointer to be NULL, so it was not previously necessary to check for this.
+-Results when numeric overflow occur (as is possible when converting a floating point number into an integer) are undefined.
+
+Any of the above issues could cause an abrupt and unpleasant termination of your program, generally with the infamous "bus error: core dumped" message under UNIX systems. Of course, such a crash would be indicative of some prior error in the users program not having been caught.
+\end{ifsdoc}
+\begin{ifsdoc}[ifsipp]
+1.4.31
+Puts pixel value into a 2-D image.
+Usage: int status = ifsipp(IFSHDR *img,int row,int col, int value);
+ifsipp is used to set the value of some pixel in a 2-dimensional image. The argument value is automatically converted from an integer into whatever data format the image is in. If the image is of type complex, then ifsipp sets the real part of the datum to value, and the
+imaginary portion to zero. ifsipp returns the value IFS SUCCESS if it succeeded, otherwise it returns the value IFS FAILURE and sets the external variable ifserr to the appropriate error code. The arguments to ifsipp are:
+-img : A pointer to the image header structure. This should refer to a 2-dimensional image. If the image has 3 or more dimensions, then ifsipp will access the first frame of the data (ie, all indices besides the first two will simply be treated as zero). 
+-row,col : The coordinates of the point to be examined. Note that row, col may also be regarded as a y, x pair. Beware that row corresponds to the y index, not the x index.
+-value : The actual data value to be put into the image. Note that if the datum represents some value that can not be represented in the data format of the image itself (such as trying to place the value 500 into a ubyte image), a meaningless value will end up being put into the image.
+
+The following error codes (defined in the #include file ifserr.h ) may be set by ifsipp (in the variable ifserr):
+-IFSE BAD HEADER: The pointer img does not point to an actual IFS image.
+-IFSE BAD DTYPE: The image is of some data type that ifsipp does not recognize. Usually this indicates that your header has been damaged, and the field img->ifsdt is mangled, or that the image data type is "struct". It could also occur if someone added a new data type to that understood by IFS, and forgot to modify ifsipp accordingly. 
+
+BUGS (features):
+-Ifsipp does not verify that the image passed to it corresponds to a 2-dimensional image.
+-The indices row, col are not checked to verify that they lie inside the image dimensions.
+-ifsipp does not check to make sure that the data pointer img-/textgreater ifsptr is not NULL. Previous versions of IFS did not allow this data pointer to be NULL, so it was not previously necessary to check for this. 
+
+Any of the above issues could cause an abrupt and unpleasant termination of your program, generally with the infamous "bus error: core dumped" message under UNIX systems. These problems will not occur however, unless the users program contains some other sort of error.
+\end{ifsdoc}
+\begin{ifsdoc}[ifsmkh]
+1.4.32
+Creates a two-dimensional IFS image THIS FUNCTION IS OBSOLETE STARTING WITH RELEASE 3.0 OF IFS THE FUNCTION ifscreate SHOULD BE USED INSTEAD
+\end{ifsdoc}
+\begin{ifsdoc}[ifsopen]
+1.4.33
+Opens a file for reading or writing.
+Usage: FILE *File = ifsOpen(char *FileName,char *Mode,char *Prompt,int NumRetries);
+ifsopen opens up a file FileName for reading or writing, and returns a pointer to the open file descriptor (stream in Unix terminology). ifsopen is used by ifspin, and the usual user does not (normally) need it. If the file can not be opened or some other error occurs, then ifsopen will return NULL. The argument Mode is the same as the mode argument to the standard i/o library function fopen, i.e. r or w for read or write access, (on Windows - based compilers, one sometimes must use "rb" and "wb". If FileName is NULL, then ifsopen just returns stdin or stdout as is appropriate for specified the Mode. 
+If FileName is a null string (FileName = ""), then ifsopen will read the name of the file to be opened from stdin. If stdin is attached to a terminal, then the string Prompt will be printed before getting the filename (unless Prompt is NULL). FileName is read using the function ifsGetFN, and expanded using ifsPrsFN, so it may contain the names of environment variables or constructs of the form login id to represent some users home directory name. If the name read in is a single dash, then ifsopen will return stdin or stdout, according to the argument Mode. 
+If a filename is being read interactively (when FileName = "", stdin is connected to a terminal, and Prompt is not NULL), then the user is allowed NumRetries mistakes before ifsopen will give up and return NULL. For instance, if ifsopen tries to open a non-existent file for reading, it will print a message to the user and ask for a new name. After several failures it will give up. This is to prevent such things as runaway shell scripts from sitting in a perpetual error loop.
+\end{ifsdoc}
+\begin{ifsdoc}[ifspin]
+1.4.34
+Reads in an image from disk.
+Usage: IFSHDR *img = ifspin(char *filename);
+ifspin is used to read an IFS image from the specified file filename. All necessary storage space for the image and its data is automatically allocated. The "tail" information for the file is not read in. If the user wants the tail information read in, he should use the newer function ifsGetImg. If filename points to a null string, then ifspin will prompt the user to specify some filename. Any filename (whether or not read interactively) will be translated using the function ifsPrsFN, which will substitute for environment variables and names of users home directories specified in the C- shell shorthand form of user/filename. If filename is NULL, then input will be read from stdin. Also, if a user is prompted for a filename, if she specifies a single dash, the input will be read from stdin. The printing of a prompt string will be suppressed if stdin is not attached to a terminal. Ifspin returns a pointer to the new image, or NULL if some sort of error occurs. In the latter case, the external variable ifserr will be set to indicate the nature of the error. Possibilities are:
+-IFSE NO OPEN if the specified file cant be opened (usually meaning that it doesnt exist.
+-IFSE IO ERR if some sort of I/O error occurred (usually meaning the file does not contain a valid IFS image). The standard system I/O library variable errno may contain additional information about the nature of the error. Note that IFSE NO OPEN is a subclass of the IFSE IO ERR error, so one can check for both automatically by using a construct of the form "if (ifserr & IFSE IO ERR) action to take();"
+-IFSE NO MEM if it isnt possible to allocate storage to put the image into. 
+-IFSE BAD NAME if some error occurred when translating the file name.
+BUGS/NOTES:
+ifspin is an obsolete function. Under version 4 of IFS, this just remaps its arguments and calls ifsGetImg. Even though it is obsolete, it is easier to use than ifsGetImg, many programs use it all the time.
+\end{ifsdoc}
+\begin{ifsdoc}[plotline]
+Plots a line in an ifs image.
+Usage: void plotline(IFSIMG img,int crow,int ccol, int len, float angle,float bright)
+Where crow and ccol correspond to the midpoint of the line of length len. angle is the angle that the normal to the line makes with the horizontal  axis.  bright is the brightness of the line.
+Note that the line generation process does a certain amount of anti-aliasing, so sloped lines are not necessarily exactly one pixel wide.
+The approach is to model a line as a collection of single pixels, but each pixel consists of 9 subpixels. The line is originally a vertical line which is rotated and translated, one subpixel at a time.
+\end{ifsdoc}
+\begin{ifsdoc}[ifspot]
+1.4.35
+Writes an image to disk. 
+Usage: int status = ifspot(IFSHDR *img,char *filename);
+ifspot is used to write an IFS image to the specified file filename. If filename points to a null string, then ifspot will prompt the user to specify some filename, and read a filename from stdin. If filename is NULL, then ifspot will write the image to stdout. Also, if ifspot reads a filename from stdin, and the filename is -, then ifspot will write to stdout. If stdin is not connected to a terminal (e.g, input is being piped in from another program), then the printing of a prompt will be suppressed. The filename is translated using ifsPrsFN, so it may contain environment variables (beginning with a leading "$") and the names of users home directories specified in the C-shell shorthand form of "user/ filename".
+RETURNS the value IFS SUCCESS if it succeeded, or IFS FAILURE if some sort of error occurred. In the latter case, the external variable ifserr will be set to indicate the nature of the error. Possibilities are:
+-IFSE BAD HEADER if img doesnt point to a valid image.
+-IFSE NOT IMAGE if there is no data associated with the header, i.e., the field img->ifsptr is set to NULL.
+-IFSE NO OPEN if the specified file cant be opened (usually meaning that the name is invalid or that the user doesnt have write permission in the directory in which she is trying to put the image.
+-IFSE IO ERR if some sort of I/O error occurred. The standard system I/O library variable errno may contain additional information about the nature of the error. Note that IFSE NO OPEN is a subclass of the IFSE IO ERR error, so one can check for both automatically by using a construct of the form if (ifserr & IFSE IO ERR) action to take();
+-IFSE BAD NAME if some error occurred while translating the name. 
+BUGS/NOTES:
+-The function of ifspot has been superceded by the newer function ifsPutImg. Starting with version 4 of IFS, ifspot is just a dummy routine which remaps its arguments and calls if- sPutImg. Ifspot, however is convenient and supported.
+-ifspot does not write out any tail information associated with the image.
+\end{ifsdoc}
+\begin{ifsdoc}[ifsPrsFN]
+1.4.36
+Expands a filename.
+Usage: char *NewName = ifsPrsFN(char *Name,int *rc);
+This function is very useful for programmers writing systems like ifs. The ifs user is also welcome to use it.
+ifsPrsFN scans a string Name looking for references to environment variables or abbreviations for a users home directory of the form user such as is provided by the Unix C-shell. It returns a pointer to the expanded name, or NULL if it failed. The space for the expanded name is allocated using calloc, so it may be cfreeed when the user is through with it. A status code is returned through the pointer rc. This code will be 0 if it was successful, 1 if the expansion failed (such as by reference to an unset environment variable), or 2 if the routine had an internal error (such as a failure in a call to calloc). 
+Environment variables are specified by prefixing the name with a dollar sign $. The name of the environment variable may contain any alphanumeric character, and is terminated by the first non-alphanumeric character found. The name may be enclosed in braces to isolate it from other characters, such as when the user desires the first character after the environment variable name to be an alphanumeric. Also, if the name is enclosed in braces, almost any printable character can be part of the variable name rather than just alphanumerics. Environment variable substitution is done on a strict left to right basis. A reference to some users home directory may be specified in the same manner as that allowed by the Unix C-shell. If the first character in a filename begins with a tilde character, then the word immediately following the tilde (where word is terminated by the first character which is not alphanumeric or underscore) is taken to be the name of some users login id; the name of the users home directory is substituted for the login id construct. 
+EXAMPLES:
+Assume the following environment variables and login ids:
+$ i ifs $ file output $J john /usr/users/myhome john /usr/users/alpha
+Then the following names expand as:
+NAME myfile$ i myfile.$ i /myfile john/$ file.$ i $ J/$ file.$ i $ ibase ibase 
+EXPANSION myfileifs myfile.ifs /usr/users/myhome/myfile /usr/users/alpha/output.ifs /usr/users/alpha/output.ifs no expansion unless environment variable ibase set ifsbase (braces isolate i from base)
+\end{ifsdoc}
+\begin{ifsdoc}[ifsPutImg]
+1.4.37
+Opens a file and writes an IFS image to it.
+Usage: int rc = ifsPutImg(IFSHDR *Image, char *FileName, char *Prompt,int WriteTail);
+ifsPutImg writes an IFS image to some file FileName. If WriteTail is false (zero), then any tail information associated with the image will not be written to the new file. 
+RETURNS IFS SUCCESS if all went well, or IFS FAILURE if something went wrong, in which case the external integer variables ifserr and column can be examined to determine the nature of the error. If FileName is NULL, then the image is written to stdout. If FileName is a null string (that is, FileName = ""), then a filename will be read in from stdin using the routine ifsGetFN. In this case, if Prompt isnt NULL and stdin corresponds to a terminal, then the string Prompt will be printed on the terminal (actually, to stderr) before reading a name. If stdin is not attached to a terminal, such as when input is being piped in from another program, then the printing of the prompt string is suppressed. If a filename is read in from stdin, and it is a single dash, then the image itself will be written to stdout. Filenames are expanded using ifsPrsFN, so they may contain such things as environment variable names and login id constructs. IfsPutImg works by opening the specified file and then calling ifsWrImg to do the actual work of storing the image. It then closes the file when its done (unless it wrote to stdout). Note that calling ifsPutImg with Filename = NULL is essentially the same as calling ifsWrImg directly. 
+The complimentary routine to ifsPutImg is ifsGetImg.
+\end{ifsdoc}
+\begin{ifsdoc}[ifsRdHdr]
+1.4.38
+Reads an IFS image header from an open file.
+Usage: IFSHDR *hdr = ifsRdHdr(FILE *file);
+ifsRdHdr reads an image header from a previously opened file. It does not read in any data or tail information for the file. It returns a pointer to the new image header, or NULL if it failed, in which case the external integer variables ifserr and column can be examined to determine the nature of the error. Space for the header is allocated dynamically, and may be freed (using cfree) when the user through with it. 
+After the header is read, the file pointer is positioned so that the next character read from the file will the first byte of the data stored in the file. Hence, ifsRdHdr does scan past any padding at the end of the header. 
+There is no complimentary routine for writing headers to open files in this version of IFS. Writing a header to a file without writing any data would not make sense Accordingly, there is a function ifsWrImg, but not an ifsWrHdr.
+\end{ifsdoc}
+\begin{ifsdoc}[ifsRdImg]
+1.4.39
+Reads an IFS image from an open file.
+Usage: IFSHDR *img = ifsRdImg(FILE *File,int ReadTail);
+ifsRdImg reads an image from a previously opened file. If ReadTail is false (zero), then any tail information associated with the image will not be read in. It returns a pointer to the new image header, or NULL if it failed, in which case the external integer variables ifserr and column can be examined to determine the nature of the error. Space for the header, data, and tail is allocated dynamically, each may be freed (using cfree or ifsfree) when the user is through with it. IfsRdImg will always read the entirety of an image file (including tail information and any padding after it), discarding the tail if it is not wanted, and the file read position will be set so that the next read request will start with the first byte after the end of the image. If File corresponds to a disk file, this just means the read pointer will point to the end-of- file (unless some garbage has been concate- nated to to the of the image file). If File does not correspond to a disk file, such as when piping is being used and File is stdin, this means the file read pointer is positioned so that subsequent read requests (including read, scanf, getchar, another call to ifsRdImg, etc.) will properly read new data rather than reading padding characters left over from the end of the first image file.
+ The complementary routine to ifsRdImg is ifsWrImg.
+\end{ifsdoc}
+\begin{ifsdoc}[resampleinit]
+3.1.6
+Refer to resamplesub.
+\end{ifsdoc}
+\begin{ifsdoc}[resamplesub]
+3.1.6
+Resample a line or curve to ensure uniform (arc-length) sampling. Accepts a set of points, x-y pairs, and produces a set of x-y pairs. There are two functions which must be called to use this feature: resampleinit and resamplesub. 
+Usage:	#include <resample.h>
+	struct rs * resampleinit(int m,int n);
+resampleinit sets up a structure in which to hold information about the resampled data. m is the number of points in the input image (the number of rows in the array). n is the number of points into which to divide the resampled output image. Once initialized, the resample function is 
+	void resamplesub(int m, int n, double **x, double **y,struct rs *p);
+The first two arguments are the same as above: m is the current number of points, n will be the number of points on the resampled curve. x and y are matrices, x2,m , y2,n holding the actual data. These are arrays created by resampleinit using dmatrix (see section 2.2.1). Their indices run from 1 to 2 (for the first index) and 1 to m or n. That is, they are created using 
+x = dmatrix(1,2,1,m);y = dmatrix(1,2,1,n);
+Note that while these functions are in libiptools, the matrix manipulation functions are in libflip, so you will need to link with both those libraries. 
+EXAMPLE:
+In the example below is shown how to set up and call the two resample functions. It does not include details about how to read and write the ASCII input and output files. 
+
+#include <math.h>
+#include <stdio.h>
+#include <ifsmatrix.h>
+#include <resample.h>
+#define EPSILON .0001
+int main(int argc, char *argv[])
+{
+double **x; /* the input shape, it has m points */
+double **y; /* the output shape, it will have n points, uniformly spaced in arc length */
+/* the shapes above are pairs of floats. The even numbered ones are x coords, the odd y */
+int m; /* m is the number of points in the input shape */
+int n; /* n is the number of points we demand the output shape will have */
+struct rs *rsdata; // this is the structure that will persist between resampleinit and resamplesub
+double median;
+FILE *fp, *fopen();
+int j;
+int getshape(char *, double **, double *, double); // function to read the input file
+int getnumberofpoints(char *);
+void clparse(int,char *[],struct clp *);// function to parse command line, not provided here
+void resamplesub(int ,int,double **,double **,struct rs *);
+struct rs *resampleinit(int,int);
+/* call the read subroutine to read in the x,y pairs of points */
+/* we pass the address of the shape pointer to getshape because the malloc will be done inside getshape */
+m = getnumberofpoints(infile); // read the input file to get the m
+n = NUMBEROFOUTPUTPOINTS;
+x = (double **)dmatrix(1,m+1,1,2);
+y = (double **)dmatrix(1,m+1,1,2);
+m = getshape(infile,x,&median,(double) 0.0); // read the input file
+rsdata = resampleinit(m,n);
+resamplesub(m,n,x,y,rsdata);
+//inititalize the struct
+/* write out the y array */
+/* actually write the x array, since we have already swaplped pointers */
+fp = fopen(outfile,"w");
+for(j = 1; j <=NUMBEROFOUTPUTPOINTS; j++)
+{
+	fprintf(fp,"%lf %lf\n",x[j][1],x[j][2]);
+}
+fclose(fp);
+return 0;
+}
+\end{ifsdoc}
+
+\begin{ifsdoc}[flrun]
+flrun-Running the FLIP functions from the command line
+
+Sometimes, users want to run a FLIP function on an image without bothering to write a program to call that function. A programs has been written  which allows the user to do just that. 
+
+
+flrun FunctionName Argumentlist
+
+the program {\em flrun} executes the specified function, using the argumentlist. For example:
+
+
+flrun flln asterix256float.ifs junk.ifs
+
+
+run the function flln (log base e) on an image. That function takes two arguments, the input image and th output image. These are passed using file names.
+\end{ifsdoc}
+
+\begin{ifsdoc}[ifssiz]
+1.4.40
+Gets size (lengths of all dimensions) of an IFS image.
+Usage: int *dlength = ifssiz(IFSHDR *image);
+ifssiz is used to determine the lengths of each dimension of an IFS image. It returns a pointer to an integer array, the various elements of which indicate the lengths of each dimension of the image, and also how many dimensions the array defined as. The array will have N+1 elements, where N is the number of dimensions of the image. The first element of the array (element number zero) gives the number of dimensions for the image. Subsequent elements of the array give the length each dimension, where the dimensions are in order of ascending rank; i.e., element one gives the number of pixels per line (number of columns) for the image, element two gives the number of lines (rows), element three is the number of frames, and so forth. 
+The space for the array returned by ifssiz is automatically allocated using standard system calls (e.g., calloc), and as such may be released back to the system with the appropriate calls (free, cfree) when the user is through with the array. 
+CAUTION - Potential Memory Leak: a popular programming error is to use ifssiz inside a loop without a free, and then wonder why the program is growing. For this reason, most programmers prefer ifsdimen to perform the same function. 
+If there is some error in ifssiz, then the external variable ifserr will be set to some error code as defined in the file ifserr.h ( most likely IFSE BAD HEADER or IFSE NO MEM.) 
+EXAMPLE:
+int nrows, ncols, ndims, * dimlength;
+IFSHDR * image2d; ...
+make or read in image pointed to by image2d ...
+dimlength = ifssiz(image2d);
+ndims = dimlength[0];
+if (ndims != 2) { /* Exit with nasty error messages ... */ }
+ncols = dimlength[1];
+nrows = dimlength[2];
+cfree( (char *) dimlength );
+\end{ifsdoc}
+\begin{ifsdoc}[ifsslice]
+1.4.41
+Takes a complete slice of a two-d or three-d image. 
+Usage: IFSHDR *newimg = ifsslice(IFSHDR *oldimg,char *string,int value);
+The following are legitimate strings "frame", "f", "row", "r", "column", "col", "c". Passing any one of these strings will inform the function that the slice should be taken with that particular dimension (row,col or frame) held constant at the integer parameter value. i.e, if the string is frame and the value = 10, then a 2-d slice of the 3-d image at frame=10 is returned. Similarly for row and col slices. This is a generic slice program for 2-d and 3-d images. Using ifsslice on 1-d images will return with a copy of the image pointer and a warning. Similarly, a text string of frame on a 2-d image returns a copy of the image pointer and a warning. 
+RETURNS NULL if an error occurs, and returns an error code through the external variable ifserr. 
+External variables: ifserr, IFSSLV Special routines used: ifscfree, ifsdie, ifswarn, ifsexwin, ifsexwin3d, ifssiz Ifsslice extracts a complete slice of a two-d or three-d image from the constituent image. The datatype of the sliced new image is exactly that of the old image. 
+Note that the slice is complete in all dimensions except in one dimension.
+\end{ifsdoc}
+\begin{ifsdoc}[ifsWrImg]
+1.4.43
+Writes an IFS image to an open file.
+Usage: int rc = ifsWrImg(IFSHDR *Image,FILE *File, int WriteTail);
+ifsWrImg writes an IFS image to some opened file File. If WriteTail is false (zero), then any tail information associated with the image will not be written to the new file. ifsWrImg returns IFS SUCCESS if all went well, or IFS FAILURE if something went wrong, in which case the external integer variables ifserr and column can be examined to determine the nature of the error. 
+The complimentary routine to ifsWrImg is ifsRdImg.
+\end{ifsdoc}
+\begin{ifsdoc}[zoomupdown]
+3.2.3
+Will zoom an image.
+Usage: zoomupdown(IFSHDR *oldimg, IFSHDR *newimg);
+The input image will be zoomed to the size of the output image. The output image will be overwritten with the zoomed version of the input image. The two images do not have to have proportional dimensions. For example, inputimage could be 512 x 512 and output image could be 640 x 480. Of course, unless the images have proportional dimensions, the output image will be distorted.
+EXAMPLE:
+img1 = ifspin("/Users/wes/Images/asterix256.ifs");
+len[0]=2;
+len[1]= ifsdimen(img1,0) * 2;
+len[2] =ifsdimen(img1,0) * 1;
+img2 = ifscreate(img1->ifsdt,len,IFS_CR_ALL,0);
+zoomupdown(img1,img2);
+\end{ifsdoc}
+
+
+
+
+
+
+
+
+
+
+\begin{ifsdoc}[ColorMap]
+7.1 ColorMap
+The program ColorMap allows you to assign a number of different colors to an    8-bit, unsigned image. That is, each of the possible 256 brightness levels will be assigned a color. There are many ways to assign an R, G, and B value to a    single pixel brightness. The program offers several different ways to interpret the brightnesses.
+
+Usage:
+ColorMap -i inputfile.ifs -o outputfile.ifs -m X -f Y
+Where inputfile is an ifs image. and X is an integer between 0 and 6 which tellsthe program which color map to use:
+0 grey scale
+1 inverse gray scale
+2 bronson
+3 hot metal
+4 heated spectrum
+5 log
+6 random
+
+The input image may be any ifs format, however, if it is not unsigned 8 bit, the user will get a warning message that only brightnesses between 0 and 255 will  be mapped. If the user has this problem, he or she should probably use vidscale to convert the darkest-brightest values to 0-255.
+
+Should the input file be 3D, the program will convert frame 0 by default. Using the -f switch, the frame to be converted can be selected.
+
+The output file will the 3 D ifs image, with 3 frames, with the usual           interpretation that frame 0 is red, frame 1 is green, and frame 2 is blue.
+\end{ifsdoc}
+\begin{ifsdoc}[Eigenimages]
+7.2 Eigenimages
+
+Program to find the principal eigenimage of a set of images. The program will   optionally also calculate the projection of another image onto the principal    eigenimage.
+
+Usage:
+Eigenimage -c controlfile -o outfile [-t projfile]
+The control file contains a single number (number of files followed by a list offile names, one per line.
+
+Example:
+2
+file1.ifs
+file2.ifs
+file3.ifs
+The output file is an ifs image of the principal eigenimage.
+The -t switch allows the user to specify the name of a file to project onto the eigenimage, and measure the length of the projection.
+All images must have the same dimensions.
+\end{ifsdoc}
+\begin{ifsdoc}[C2LaTex]
+7.7 C2LaTeX
+This program allows the user to include his/her source code into a LaTeX        document. Any line which starts with
+
+//l(the ell character)
+
+will not only be a comment to C or C++, but allows the user to include any LaTeXcommand at all. (Well, almost any). The exception is you may not include the    string
+
+'\end{verbatim}'
+
+You may of course, use the \textbackslash with no problem. You might also       consider using the listing environment rather than the verbatim environment.
+
+Usage:
+C2LaTeX -i inputfile.c -o outputfile.tex -m ValueOrFilename
+
+if the -m switch as a value of zero: (e.g. below)
+
+C2LaTeX -i inputfile.c -o outputfile.tex -m 0
+
+Then the output LaTeX file will not contain a header (the stuff before the      \begin{document}) or the \end{document} . This is particularly useful if you    intend to include or input this LaTeX file into another file.
+If it is to be stand-alone, the -m switch should specify the name of the header file you want the program to use, e.g.:
+
+C2LaTeX -i inputfile.c -o outputfile.tex -m myheader.tex
+\end{ifsdoc}
+\begin{ifsdoc}[ChooseFrame]
+5.10 ChooseFrame
+Select a single frame from an image. This is particularly useful for images     which have been read as color (say, JPEG) and you wish to store a single frame  of the RGB image. 
+
+ChooseFrame -i inputimage -o outputimage -f framenumber
+
+The default frame number is zero.
+\end{ifsdoc}
+\begin{ifsdoc}[HarrisLaplace]
+6.1 Harris-Laplace
+This program reads an image file and computes the output of the Harris corner   detector over scale, and applies a Laplacian over the same range of scales.
+
+Usage:
+HarrisLaplace [switches]
+Switches are:
+-i inputfilename
+-H Harris measure out. Default: HarrisLaplace.ifs
+-L Laplace measure out. Default: HarrisMeasure.ifs
+
+The output images are ifs 3D images, data type of these images is float.
+\end{ifsdoc}
+\begin{ifsdoc}[PlayMovie]
+7.5 PlayMovie
+Plays a 3d ifs image as a movie
+
+Usage:PlayMovie [arguments]
+switches are
+-i inputfile.ifs
+-z floating point zoom factor. Will zoom image prior to playing. Default: 1.0
+-h this usage
+-s time (in microseconds) to delay between frames (minimum 1, max 999999). If   the argument of the -s switch is greater than 1,000,000, the program will wait  for the user to hit a key before going to the next frame.
+-d direction if direction is 0, the movie will be played forward if 1, backward if 2 forward then back.
+
+This program is just a wrapper around CreateIFSDisplayWindow and WriteToIFSDis-
+playWindow. It plays a 3D image as a movie with controllable zoom and speed.
+
+IMPORTANT NOTE ABOUT PlayMovie:
+PlayMovie uses the openCV functions. OpenCV supports ONLY dynamic libraries.
+This means you must either have openCV installed on your computer, or you must  have the openCV libraries available, even though you actually aren't writing any software that will use them. We tried (unsuccessfully) to get openCV to        generate static libraries so it would be portable, but we failed, and learned   from web conversations that it does not seem to be possible. The openCV         libraries are in the ifslib that you downloaded.
+\end{ifsdoc}
+\begin{ifsdoc}[add]
+5.1 add
+Add two ifs images together, point by point.
+
+Usage:
+add infile 1, infile2, outfile, type
+options for data type of output file are:
+b (unsigned byte)
+s (short)
+i (int)
+f (float)
+c (complex)
+\end{ifsdoc}
+\begin{ifsdoc}[addhdr]
+5.2 addhdr
+Adds an IFS header to a raw data file. rmvhdr is the reverse function.
+\end{ifsdoc}
+\begin{ifsdoc}[any2any]
+5.4 any2any
+convert data types
+Converts any IFS image to or from (almost) any other data format including other ifs data types
+
+usage: any2any [switches]
+-i inputfile.ifs
+-o outputfile.xxx
+-d datatype
+
+datatype is an ifs data type, such as byte, ubyte, char, uchar, u8bit, short,   ushort, u16bit, int, float 32flt, double, 64flt, etc. For other file types, such as bmp, jpg, png, etc, the type is determined by the file name. If outfile is  not ifs, dtype IS required to be uchar, (for this version), even if neither in  nor out is ifs.
+
+Examples:
+convert an ifs image of some unspecified data type to an ifs image of type float
+any2any -i startrack.ifs -o startrackfloat.ifs -d float
+
+convert an ifs image of unspecified data type to png. Note that this may not    work if the input is 3-D.
+any2any -i startrack.ifs -o startrack.png -d uchar
+
+convert a jpeg input image to a float ifs image.
+any2any -i lena.jpg -o lenafloat.ifs -d float
+\end{ifsdoc}
+\begin{ifsdoc}[atoi]
+5.3 atoi
+Converts an ascii file to ifs. Input file is to be in the format produced by    itoa using the -v switch. The -v switch on itoa adds two lines at the beginning of the file which specifies the size and data type. Author: Wesley Snyder
+
+example:
+Image has 4 rows and 4 columns
+Data format is u8bit
+0 0 0 0
+0 1 0 0
+0 0 2 0
+0 0 0 0
+
+Usage:
+atoi imga.txt imga.ifs
+Note this program does not use the -i -o convention.
+\end{ifsdoc}
+\begin{ifsdoc}[c2imag]
+5.5 c2imag
+Take the imaginary part of an ifs image, point by point. The input data type    must be complex. Author: Wesley Snyder
+Usage:
+c2imag inputfile outputfile
+\end{ifsdoc}
+\begin{ifsdoc}[c2mag]
+5.6 c2mag
+Take the magnitude of an ifs image, point by point. The input data type must be complex. Author: Wesley Snyder
+Usage:
+c2mag inputfile outputfile
+\end{ifsdoc}
+\begin{ifsdoc}[c2phase]
+5.7 c2phase
+Take the phase of an ifs image, point by point. The input data type must be     complex. Author: Wesley Snyder.
+Usage:
+c2phase inputfile outputfile
+\end{ifsdoc}
+\begin{ifsdoc}[c2real]
+5.8 c2real
+Take the real part of an ifs image, point by point. The input data type must be complex. Author: Wesley Snyder. 
+Usage:
+c2real inputfile outputfile
+\end{ifsdoc}
+\begin{ifsdoc}[ccl]
+6.5 ccl 
+Connected-component Labeling
+This program uniquely labels the connected components of an ifs image. It uses  the algorithm described in Snyder and Qi, Machine Vision, Cambridge University  Press, 2005.This program only supports images in the following data types:      unsigned char, short, and float. Switches:
+-h : print out this message
+-i <input_image_file_name>
+-o <output_image_file_name> This will be the label image, in which is stored at each pixel
+-p <parameter_file_name> (optional)
+-l <lower limit for labeling region> (default 0) Normally this is the background
+-u <upper limit for labeling region> (default 255)
+-[f|e|v] : use face/edge/vertex connectivity (default face)
+-t <threshold for connectivity>
+(two pixels which differ by more than this will not be merged-(default 2)
+-s <row> <column> <frame> (Seed Location of Region of Interest)
+Normally, ROIs are not used. -r <label of ROI> (default 1)
+-g : outimg is ROI_seg_out image (default label image)
+-j <pixel value for ROI_seg\_out image > (default 128)
+-a <upper background label> (default 0)
+-b <lower background label> (default 0)
+-m <minimum label used> (default 0)
+-x <maximum label used> (default 32767)
+-c <Size of the content-addressable memory used to resolve
+equivalent region labels.> (default 4096)
+ccl is a wrapper around the function ifs ccl. It parses the command line, fills in the structure used by ifs ccl, initializes some things, and then calls ifs   ccl. If you need to call connected components from inside a program, see the    description of the function ifs ccl. See the documentation for ifs ccl for      additional documentation, including figure 3.1 which defines the types of       connectivity.
+\end{ifsdoc}
+\begin{ifsdoc}[chopup]
+chopup
+This function takes an image and creates four new images that each correspond
+to a quadrant of the original image. If your original image is a 256x256, each  new image will be of size 128x128. The function names the images with the following convention:
+inimage.AA.ifs => Top left quadrant
+inimage.AB.ifs => Top right quadrant
+inimage.BA.ifs => Bottom left quadrant
+inimage.BB.ifs => Bottom right quadrant
+
+Usage:
+chopup -i inimage
+\end{ifsdoc}
+\begin{ifsdoc}[compress]
+compress
+This function takes an image and compresses it. 
+
+Usage:
+chopup -i inimage -o outimage
+\end{ifsdoc}
+\begin{ifsdoc}[cut3d]
+cut3d
+
+Usage:
+cut3d srcimgfile outimgfile Px Py Pz [-yXX.XX] [-pXX.XX] [-rXX.XX] [-dXX.XX]
+\end{ifsdoc}
+\begin{ifsdoc}[exwin3d]
+exwin3d
+The input to this function must be a 3d image.
+
+Usage:
+exwin3d <inputfile> <outputfile> <f0> <r0> <c0> <f1> <r1> <c1> where f0, r0, c0 and f1, r1, c1 are the fream row and column coordinates of the inclusive corners of the area to extract.
+\end{ifsdoc} 
+\begin{ifsdoc}[flipover]
+flipover
+
+This help file is still in progress
+\end{ifsdoc}
+\begin{ifsdoc}[gaussnoise]
+5.11 gauss
+Add Gaussian-distributed noise to an image
+
+Switches:
+-i inputfilename
+-o outputfilename
+-m mean
+-s stddev
+-n (no argument) - don't allow negative values for noise
+-w (no argument) -don't allow overflows (wrap arounds) e.g. adding a value of 3 to an 8bit pixel with value of 254 will produce a pixel with value of 1
+-S IntegerSeedForRandomNumGen (normally dont use this)
+\end{ifsdoc}
+\begin{ifsdoc}[histogramEqual]
+histogramEqualize
+
+Usage:
+histogramEquzlie -i inimage -o outimage
+\end{ifsdoc}
+\begin{ifsdoc}[ifs2avi]
+ifs2avi
+Converts an ifs image with frames to an avi movie file. If the ifs image is not unsigned 8 bit, then errors might occur. 
+
+Usage:
+ifs2avi [switches] switches are
+	-i inputfile.ifs
+	-o outputfile.avi
+	-m colormapfile.map
+If no colormap specified, the default gray scale is used. Colormap file contains
+256 ascii lines with three (RBG) values per line. If the colormap file name is asingle digit, as defined below, then a default map will be used:
+	-m 0 grey scale
+	-m 1 inverse grey scale
+	-m 2 bronson
+	-m 3 hot metal
+	-m 4 thermal
+	-m 5 log
+	-m 6 random
+\end{ifsdoc}
+\begin{ifsdoc}[ifs2raw]
+ifs2raw
+Converts an ifs image to a .raw image
+
+Usage:
+ifs2raw -i inimage.ifs -o outimage.raw
+\end{ifsdoc}
+\begin{ifsdoc}[ifsDoG]
+ifsDoG
+Apply a derivative of Gaussian kernel to an ifs image
+
+usage: ifsDoG [switches]
+switchs are
+-i infilenname, where infilename is an ifs image default: the null string
+-o outfilenname, where outfilename is an ifs image default: the null string
+-s sigma, std. dev of the filtering Gaussian default: sqrt of 3.0
+-O order of the derivative zero is blur with the Gaussian, one is first deriv,  etc, up to 3rd deriv
+-d direction. This flag is the letter c for col, r for row, b for both 
+default: col
+-b option only valid for second deriv
+example: ifsDoG -i myfile.ifs -o outfile.ifs -O 0 -d r
+\end{ifsdoc}
+\begin{ifsdoc}[ifsview]
+ifsview
+View ifs images
+
+This is a new program with ifs release 8. It supercedes wxifsview, which may    still run on some computers. The application ifsview provides the ability to    view, zoom, or probe ifs images. It uses the openCV software system. To run     ifsview, use the following command:
+
+ifsview -i image [-c] [-I ignoreswitch] [-s]
+
+image is the input image. image can be any format of ifs, or jpg, tiff, bmp, and png. If ifs,it can be monochromatic or color. If monochromatic, it may have two or three dimensions. 
+
+colorswitch The optional color switch, if it exists, tells ifsview that if the  input image happens to be three dimensional and have three frames, it should be displayed as a color image, rather than a 3D image
+
+ignoreswitch If this brightness is entered, then any pixels of this value will  not enter the calculation of contrast.
+
+-s If the -s switch is present, frames in a 3D image with be brightness-scaled  independently. Otherwise, the brightest and darkest points in the entire image  will be used for scaling.
+
+Once you have started up ifsview, you have a variety of options:
+LOUPE: As soon as the image pops up, and you move the mouse over it, another
+image will pop up which is a zoomed version of the original image, zoomed about
+where the mouse is. We will refer to this second image as the "loupe" image, as in a jewler'sloupe. As you move the mouse, the second image will move around    also.
+
+stopping the tracking: A right click on the original image will freeze the loupeimage. A second right click will turn tracking back on. On the mac, a right     click is accomplished by hitting the trackpad with two fingers simultaneously.
+
+Additional: zoom With the pointer on the original image, you can use right and  left arrow keys to increase or decrease zooming (respectively). Note that you   will not see the result of the zoom until you move the mouse again, which will  refresh the loupe image.
+
+Image values-original image: Clicking on the original image will return the     brightness at the point of the click, or if color, will return the R,G,B values.
+
+Image values -loupe image: To look at points in great detail, first move the    mouse to get to where you want to be in the original image. Then right click to turn off tracking. Move the pointer to the loupe image, and click on any point. The brightness or color of that point will be returned.
+
+Exploring 3D images: With the mouse on the original image (tracking can be on or
+off), the up and down arrow will display different frames of the 3D image. Remember that these values don't show up in the loupe image until you move the mouse.
+
+Contrast enhancement: The lower-case c key will toggle contrast enhancement of  the loupe image on and off. 
+
+Should you simply wish to display an image and obtain information about it, use the program ifsview, which is just a wrapper around ifsCVPopup, and that way,   you won't need to mess with linking openCV, which can be a painful hassle.
+
+IMPORTANT NOTE ABOUT ifsview:
+ifsview uses the openCV functions. OpenCV supports ONLY dynamic libraries. This
+means you must either have openCV installed on your computer, or you must have  the openCV libraries available, even though you actually aren't writing any     software that will use them. We tried (unsuccessfully) to get openCV to generate static libraries so it would be portable, but we failed, and learned from web  conversations that it does not seem to be possible. The openCV libraries are in the ifslib that you downloaded.
+\end{ifsdoc}
+\begin{ifsdoc}[info]
+info
+
+Prints header information for an IFS image
+
+Usage:
+info[switches] switches are
+	-i inputfile.ifs
+\end{ifsdoc}
+\begin{ifsdoc}[invariantMoment]
+invariantMoment
+
+This function calculates and outputs the seven invariant moments of the input   image. 
+
+Usage:
+invariantMoment -i inimage.ifs
+\end{ifsdoc}
+\begin{ifsdoc}[itoa]
+5.13 itoa
+
+converts an image to printable ASCII. The output is written to the terminal.    Output can be redirected to a file using the Unix redirect command.
+Examples:
+1) to output an image to the screen: 
+	itoa site14.c.ifs
+2) to ouptut an image to a file itoa 
+	site14.c.ifs > site14.c.txt
+3) to output an image to a file with a prefix specifying the rows, columns, and data type
+	itoa -v site14.c.ifs
+
+If the -v switch is used the first two lines output will look like this:
+	Image has 48 rows and 32 columns
+	Data format is 16bit
+Author: Mark Lanzo
+\end{ifsdoc}
+\begin{ifsdoc}[makecolor]
+This program accepts a 2D ifsimage as input and produces a jpg, png, or other   output. This is necessary because ifs uses openCV to convert images from ifs to other format. openCV thinks all jpg, png, etc. images are color, so if you give it an input which is a 2D image, it will fail, producing an output which is not readable.
+
+Usage: example:
+makecolor -i input.ifs -o output.ifs
+\end{ifsdoc}
+\begin{ifsdoc}[mult1]
+mult
+
+Usage:
+mult infile1 infile2 outfile type
+Options for data type of output file are:
+b (unsigned byte)
+s (short)
+i (int)
+f (float)
+c (complex)
+\end{ifsdoc}
+\begin{ifsdoc}[oneslice]
+oneslice
+The input image to this function must be 3d.
+
+Usage: 
+oneslice <inputfile> <outputfile> <-p position> <-r or -c or -f>
+\end{ifsdoc}
+\begin{ifsdoc}[plin2]
+6.3 plin
+Piecewise-linear image noise removal
+This program does Edge-preserving smoothing and noise removal using a piecewise-linear prior.
+
+USAGE:plin -i infile [-s sigma] [-r stepsize] [-b priorgain] [-t initialtemp]
+[-T finaltemp] [-l dlt] [-o n]
+
+Once the program is running, it will prompt the user for control variables,     these are listed below, along with good values to use
+
+sigma: The std dev of the noise. default 1.0
+
+r,step size, smaller is more stable but slower. default is 0.02
+
+b, The coefficient in front of the prior term. Beta of Eq. 6.41 in Snyder and   Qi, good value is .5
+
+t, initial temperature. default 2.0
+
+t2, final temperature default 0.005
+
+lambda: rate by which the temperature drops. good value : 0.99
+
+n: used with the -o switch. The program will output a temporary
+image every n iterations
+
+example: plin -i G
+
+SEE Snyder and Qi, Machine Vision, Cambridge University Press, 2005, Equation 6.41
+\end{ifsdoc}
+\begin{ifsdoc}[plotcontour]
+Plotcontour: a program which will plot a 1D contour into an ifs image. The      contour will be white on a black background. usage:
+plotcontour -i infile -o outimage -s scale -r imagerows -c imagecols
+
+infile is an ascii file of x,y point pairs, the first line of which is sharp    sign, space, number of points
+e.g. # 799
+On each following line, the format is "x y"
+Normally, x is columns and y is rows
+example:
+# 4
+0 200
+200 0
+0 0
+200 200
+the outimage file is the name of an ifs file containing white dots on a black   background 
+
+optional argument scale will multiply x and y coords by scale
+
+optional arguments imagerows, imagecols will force the image output to be that  size.
+
+Note that if the points go off the image, they will be clipped.
+the -p switch will write precisely the coordinates specified in the file.
+\end{ifsdoc}
+\begin{ifsdoc}[prthdr]
+5.17 prthdr
+
+Print the header structure for an IFS image (in human readable format). 
+
+Usage:
+prthdr inimage.ifs
+\end{ifsdoc}
+\begin{ifsdoc}[recip]
+5.20 recip
+
+Take reciprocal of an ifs image, point by point
+
+Usage: 
+recip infile outfile
+\end{ifsdoc}
+\begin{ifsdoc}[rmvhdr]
+5.18 rmvhdr
+
+Remove the header from an IFS image to yield a raw data file. 
+
+Usage: 
+rmvhdr -i inimage.ifs
+\end{ifsdoc}
+\begin{ifsdoc}[rotate90]
+rotate90
+Rotates an image 90 degrees
+
+Usage:
+rotate90 infile outfile
+\end{ifsdoc}
+\begin{ifsdoc}[spin]
+spin
+
+Usage: 
+spin -i inimage -o outimage
+\end{ifsdoc}
+\begin{ifsdoc}[squp]
+squp
+Squares up an image by resampling data to produce square (cubc) pixels (voxels)
+
+Usage:
+squp [switches]
+	-i inputfilename.ifs
+	-o outfilename.ifs
+	-c colspacing
+	-r rowspacing
+	-f framespacing
+	[-z zoomamount]
+\end{ifsdoc}	
+\begin{ifsdoc}[stats]
+stats
+
+Gives the statistics for the input image. Includes maximum value, minimum value,
+mean value, variance, and std. dev.
+
+Usage:
+stats -i inimage.ifs
+\end{ifsdoc}
+\begin{ifsdoc}[sub]
+sub
+
+Usage:
+sub infile1 infile2 outfile type
+options for data type of output file are:
+b (unsigned byte)
+s (short)
+i (int)
+f (float)
+c (complex)
+\end{ifsdoc}
+\begin{ifsdoc}[subsample]
+subsample
+
+Subsamples an arbitrary ifs image to be of a specified size. 
+
+Usage:
+subsample inimage outimage dimensionsinx dimensionsiny
+\end{ifsdoc}
+\begin{ifsdoc}[vidscale]
+vidscale
+
+Video scale an ifs image, that is, produce an output image which is the same
+size as the input image, but scaled to between 0 and 255, and be unsigned char.
+\end{ifsdoc}
+\begin{ifsdoc}[viewpoint]
+viewpoint
+
+Usage:  transform [options]
+Options are:
+    -h or -H    -- This help message.
+	 -i			 -- Input File name
+	 -o			 -- Output File name
+    -r          -- Display messages as each row in the image is processed
+    -v          -- project volume beneath each pixel.
+    -z          -- treat pixels with z=0 as backgnd (ignore them)  -- 
+                   i.e, don't project the baseplane
+    -m          -- project volume only to nearest non-zero neighbor
+                   i.e, don't project volumes all the way to baseplane
+                   This option implies -v option.
+    -x          -- Project pixels as boxes rather than flat plates; only
+                   meaningful if -v and -m NOT used, since -v/-m cause
+                   pixels to be projected as columns anyways.
+    -q          -- Do not prompt the user for input. However, accept input
+                   as usual. This option is only useful if stdin is a file
+    -s          -- Turn off autosize/autoshift operation.  By default, the
+                   output image will be made large enough to include the
+                   entire input image after rotation, and the rotated image
+                   will be shifted so that no part of it is clipped off.  If
+                   -s is specified, then this won't happen and you will be
+                   asked to specify the desired size of the output image.
+ the easiest way to specify the transform of viewpoint is
+ rpyt rollindegrees pitchindegrees yawindegrees movex movey movez end. example: rpyt 10 20 30 5 4 3 end
+\end{ifsdoc}
+\begin{ifsdoc}[window]
+window 
+
+This program extracts a window from an ifs image. The resultant output image is of the same data type as the input.
+
+Usage:
+window input output xleft ylower xright yupper
+
+input and output are two dimensional ifs image files. Output will be created by this program. xleft is the index of the left-most column of the input image     which should be in the window. ylower is the index of the lowest-index row of   the desired window. xright and yupper are the other extremes. NOTE: yupper must be greater than ylower. Thus, upper and lower correspond to indices, not to a   top-bottom relation on a display screen. Author: Wesley Snyder
+\end{ifsdoc}
+
+
+
+
+
+
+
+
+
+
+\begin{ifsdoc}[curv]
+curv
+Curvature at each point.
+int curv(IFSIMG inimg, IFSIMG outimg);
+
+Computes the curvature at each point in the image inimg. Used in Curvature Scale
+Space (CSS) and other applications.
+
+\end{ifsdoc}
+\begin{ifsdoc}[flDoG]
+2.5.1 flDoG
+Applies the derivative of an isotropic, zero-mean Gaussian to an image. 
+int flDoG(IFSIMG inimg, IFSIMG outimg, float sigma, int order, int direction);
+
+This is by far the best derivative program in the flip library. By choosing 
+combinations of the arguments, order and direction, one can compute the blurs
+and derivatives in the table below. Sigma is the standard deviation of the 
+Gaussian. The kernel kernel will be computed by the program by extrapolating 
+out to 3 sigma. This could result in a large kernel and long run times. You 
+may get a warning message to this effect, but the program will run anyway. 
+Because the kernels may get large, the program checks that the image is at 
+least large enough to hold the iage. If not, the program will exit with an 
+error message.
+
+The message "Something wrong with arguments to function ifsDoG" indicates that
+an impossible combination of order and direction were specified.
+
+Order  Direction  Function
+  0        0      Convolution with 0th derivative of a Gaussian, which is a blur
+  1        0      First derivative wrt x (column direction)
+  2        0      Second derivative wrt x (column direction)
+  3        0      Third deriv wrt x (column direction)
+  0        1      Blur, same as 0 0
+  1        1      First derivative wrt y (row direction)
+  2        1      Second derivative wrt y (row direction)
+  3        1      Third derivative wrt y (row direction)
+  0        2      Blur, same as 0 0
+  1        2      Undefined. Will produce an error message
+  2        2      Cross second deriv (Partial**2 f )/ (Partial x Partial y)
+  3        2      Undefined. Will produce an error message
+
+int flDoG(IFSIMG inimg, IFSIMG outimg, float sigma, int order, int direction)
+
+\end{ifsdoc}
+\begin{ifsdoc}[flGabor]
+2.5.2 flGabor
+Performs a Gabor filtering on an image.
+int flGabor(IFSIMG input, IFSIMG output, float sigma, float theta, float lambda,
+                                                      float gamma, float psi);
+						      
+The normal to the line has the angle theta, not the line itself. The parameters
+involved in the construction of a 2D Gabor filter are:
+
+sigma	The standard deviation of the Gaussian function
+theta	The orientation of the normal to the parallel stripes of the Gabor
+lambda	The wavelength of the sinusoidal function
+gamma	The aspect ratio of the exponential
+psi	The phase of the sine wave
+
+Note that flGabor gives the user the options of selecting psi, the phase of the 
+cosine, which allows the user to determine whether to be sensitive to lines, 
+rising edges, or falling edges. A phase of zero means use a cosine centered at
+zero, which is best for finding lines (two opposite edges), One may detect very 
+narrow lines by using a psi of zero and a narrow wavelength. A psi of -pi/2 
+changes the cosine to a sine which makes it sensitive to finding positive edges.
+A psi of pi/2 changes the cosine to a downward sine which makes it sensitive to
+finding falling edges. Theta is an angle measured in radians, relative to the x
+axis. If theta = 0 (for example), the filter will prefer vertical edges.
+
+Good example settings for finding lines (not edges) are lambda = 4, psi = 0.
+
+\end{ifsdoc}
+\begin{ifsdoc}[flabsolute]
+2.3.1 flabsolute
+Take absolute value of an image.
+int flabsolute(IFSIMG inimg, IFSIMG outimg);
+
+\end{ifsdoc}
+\begin{ifsdoc}[fladds]
+2.3.2 fladds
+Add a scalar to an image.
+int fladds(IFSIMG img1, IFSIMG img2, float scalar);
+
+\end{ifsdoc}
+\begin{ifsdoc}[fladdv]
+2.3.3 fladdv
+Add two images.
+int fladdv(IFSIMG img1, IFSIMG img2, IFSIMG img3);
+
+The first input image is img1, the second input image is img2, the output is 
+img3. Corresponding pixels of img1 and img2 are added and the result stored 
+in img3.
+
+\end{ifsdoc}
+\begin{ifsdoc}[flclip]
+2.3.4 flclip
+Limit permitted brightness in images.
+int flclip(IFSIMG inimg, IFSIMG outimg, float scalar);
+
+The input image is clipped so that its maximum value is scalar.
+
+\end{ifsdoc}
+\begin{ifsdoc}[flcp]
+2.3.5 flcp
+Copy an image.
+flcp(IFSIMG inimg, IFSIMG outimg);
+
+The image inimg will be copied to the image outimg.
+
+\end{ifsdoc}
+\begin{ifsdoc}[fldivs]
+2.3.6 fldivs
+Divide an image by a scalar.
+fldivs(IFSIMG inimg, IFSIMG,img2, float scalar);
+
+Each pixel of inimg will be divided by the scalar, and the result stored in the
+corresponding pixel of outimg.
+
+\end{ifsdoc}
+\begin{ifsdoc}[fldivv]
+2.3.7 fldivv
+Divide two images.
+int fldivv(IFSIMG img1, IFSIMG img2, IFSIMG img3);
+
+Each pixel of img1 is divided by the corresponding pixel of img2, and the result
+stored in img3. Note, no check for divide by zero is performed, so the special 
+floating point value INFINITY can occur.
+
+\end{ifsdoc}
+\begin{ifsdoc}[flexp]
+2.3.8 flexp
+Exponentiate each pixel independently.
+int flexp(IFSIMG inimg, IFSIMG outimg);
+
+Each pixel of inimg is independently exponentiated. Result stored in outimg.
+
+\end{ifsdoc}
+\begin{ifsdoc}[flln]
+2.3.9 flln
+Compute logs of pixels independently.
+int flln(IFSIMG inimg, IFSIMG outimg);
+
+Computes out[i] = log(in[i]);
+
+\end{ifsdoc}
+\begin{ifsdoc}[flmults]
+2.3.10 flmults
+Scalar multiply.
+int flmults(IFSIMG inimg, IFSIMG outimg, float scalar);
+
+Multiply each pixel of inimg by scalar and store the result in the corresponding
+pixel of outimg.
+
+ \end{ifsdoc}
+ \begin{ifsdoc}[flmultv]
+2.3.11 flmultv
+Vector multiply.
+int flmultv(IFSIMG img1, IFSIMG img2, IFSIMG img3);
+
+Each pixel of img1 is multiplied by the corresponding pixel of img2, the result 
+stored in img3. This is equivalent to the MATLAB .* operation.
+
+ \end{ifsdoc}
+ \begin{ifsdoc}[flneg]
+2.3.12 flneg
+Negate image pixels.
+int flneg(IFSIMG inimg, IFSIMG outimg);
+
+Each pixel of inimg is multiplied by -1 and the result is stored in outimg.
+
+ \end{ifsdoc}
+ \begin{ifsdoc}[flnorm]
+2.3.13 flnorm
+Norm of an image.
+int flnorm(IFSIMG img, float *norm);
+
+Returns the 2-norm of the image img. The second argument is a POINTER to a
+float, and the norm (square root of sum of squares of pixels) will be returned.
+
+ \end{ifsdoc}
+ \begin{ifsdoc}[flrec]
+2.3.14 flrec
+Reciprocal of an image.
+int flrec(IFSIMG inimg, IFSIMG outimg);
+
+Each pixel of the input image, inimg, is divided into one, and the result
+stored in the corresponding pixel of outimg. This function tests for divide by
+zero, reports an error, and exits early.
+
+ \end{ifsdoc}
+ \begin{ifsdoc}[flsq]
+2.3.15 flsq
+Square the pixel values.
+int flsq(IFSIMG inimg, IFSIMG outimg);
+
+For every pixel, out[i] = in[i] * in[i] ;
+
+  \end{ifsdoc}
+ \begin{ifsdoc}[flsqrt]
+2.3.16 flsqrt
+Square root of pixels.
+int flsqrt (IFSIMG inimg, IFSIMG outimg);
+
+The square root of each pixel is taken. If any pixels are negative, the function
+will return FAILURE (0), else it will return SUCCESS (non-zero).
+
+  \end{ifsdoc}
+ \begin{ifsdoc}[flsubs]
+2.3.17 flsubs
+Scalar subtract.
+int flsubs(IFSIMG inimg, IFSIMG outimg, float scalar);
+
+Subtract a scalar from every element of an image.
+
+  \end{ifsdoc}
+ \begin{ifsdoc}[flsubv]
+2.3.18 flsubv
+Vector subtract.
+int flsubv(IFSIMG img1, IFSIMG img2, IFSIMG img3);
+
+Each pixel in the second image, img2, is subtracted from the corresponding pixel
+in img1, and the result stored in img3. Valid for any number of dimensions.
+
+  \end{ifsdoc}
+ \begin{ifsdoc}[flthresh]
+2.3.19 flthresh
+Threshold an image.
+int flthresh(IFSIMG inimg, IFSIMG outimg, float scalar, float bkgnd);
+
+Each pixel of input image inimg is tested against scalar. If pixel > scalar, the
+pixel is unchanged, otherwise, the corresponding pixel in the output image is 
+set to the value bkgnd. Valid for any number of dimensions.
+
+\end{ifsdoc}
+\begin{ifsdoc}[flthresh2]
+2.3.20 flthresh2
+Threshold an image.
+int flthresh2(IFSIMG inimg, IFSIMG outimg, float scalar, float bkgnd,
+                                                         float fgnd);
+
+Each pixel of input image inimg is tested against scalar. If pixel > scalar, the
+pixel is set to fgnd, otherwise, the corresponding pixel in the output image is 
+set to the value bkgnd. Valid for any number of dimensions.
+
+\end{ifsdoc}
+\begin{ifsdoc}[flcurv]
+flcurv
+Curvature at each point.
+int flcurv(IFSIMG inimg, IFSIMG outimg);
+
+Calculates the curvature at every pixel of inimg and returns the result in
+outimg.
+
+\end{ifsdoc}
+\begin{ifsdoc}[fldx]
+2.5.3 fldx
+Estimate partial derivative in the x-direction.
+int fldx(IFSIMG inimg, IFSIMG outimg);
+
+Compute an approximation of the first derivative with respect to x by the
+difference between pixels in an image. For each pixel, 
+
+    outrow[j][i] = (inrow[j][i+1] - inrow[j][i - 1]) * 0.5;
+
+If all the inputs are not float, the function returns -1. If the input
+dimensions are not compatible, the function returns -2. Note that no error
+messages are printed, so the user must check the value returned.
+
+Do not use in-place.
+
+\end{ifsdoc}
+\begin{ifsdoc}[fldx_back]
+2.5.4 fldx_back
+Backward difference in the x-direction.
+int fldx_back(IFSIMG inimg, IFSIMG outimg);
+
+Compute the backward difference between pixels in an image. For each pixel,
+
+    outrow[j][i] = inrow[j][i+1] - inrow[j][i]; 
+
+is computed. If all the inputs are not float, the function returns -1. If the
+input dimensions are not compatible, the function returns -2. Note that no
+error messages are printed, so the user must check the value returned.
+
+The forward and backward differences both estimate the first partial derivative
+with respect to x, but do it with higher resolution (and higher noise 
+sensitivity) than fldx. They are useful in iterative algorithms where you do one
+iteration using the forward difference, and the next using the backward.
+
+Do not use in-place.
+
+\end{ifsdoc}
+\begin{ifsdoc}[fldx_forw]
+2.5.5 fldx_forw
+Forward difference in the x-direction.
+int fldx_forw(IFSIMG inimg, IFSIMG outimg);
+
+Compute the forward difference between pixels in an image. For each pixel,
+
+    outrow[j][i] = inrow[j][i] - inrow[j][i-1]; 
+
+is computed. If all the inputs are not float, the function returns -1. If the
+input dimensions are not compatible, the function returns -2. Note that no
+error messages are printed, so the user must check the value returned.
+
+The forward and backward differences both estimate the first partial derivative
+with respect to x, but do it with higher resolution (and higher noise 
+sensitivity) than fldx. They are useful in iterative algorithms where you do one
+iteration using the forward difference, and the next using the backward.
+
+Do not use in-place.
+
+\end{ifsdoc}
+\begin{ifsdoc}[fldxx]
+2.5.6 fldxx
+Second partial derivative with respect to x.
+int fldxx(IFSIMG inimg, IFSIMG outimg);
+
+Uses a 3x1 kernel. If all the inputs are not float, the function returns -1. If
+the input dimensions are not compatible, the function returns -2. Note that no 
+error messages are printed, so the user must check the value returned.
+
+Do not use in-place.
+
+\end{ifsdoc}
+\begin{ifsdoc}[fldxy]
+2.5.7 fldxy
+Second partial derivative with respect to x and y.
+int fldxy(IFSIMG inimg, IFSIMG outimg);
+
+Uses a 3x3 neighborhood. If all the inputs are not float, the function returns 
+-1. If the input dimensions are not compatible, the function returns -2. Note 
+that no error messages are printed, so the user must check the value returned.
+
+Do not use in-place.
+
+\end{ifsdoc}
+\begin{ifsdoc}[fldxz]
+2.5.8 fldxz
+Second partial derivative with respect to x and z.
+int fldxz(IFSIMG inimg, IFSIMG outimg);
+
+Uses a 3x3 neighborhood. If all the inputs are not float, the function returns 
+-1. If the input dimensions are not compatible, the function returns -2. Note 
+that no error messages are printed, so the user must check the value returned.
+
+Do not use in-place.
+
+\end{ifsdoc}
+\begin{ifsdoc}[fldy]
+2.5.9 fldy
+First partial derivative with respect to y.
+int fldy(IFSIMG inimg, IFSIMG outimg);
+
+If all the inputs are not float, the function returns -1. If the input
+dimensions are not compatible, the function returns -2. Note that no error
+messages are printed, so the user must check the value returned. See fldx.
+
+Do not use in-place.
+
+\end{ifsdoc}
+\begin{ifsdoc}[fldy_back]
+2.5.10 fldy_back
+Backward difference in the y-direction.
+int fldy_back(IFSIMG inimg, IFSIMG outimg);
+
+Compute the backward difference between pixels in an image. For each pixel,
+
+    outrow[j][i] = (inrow[j+1][i] - inrow[j-1][i]) * 0.5;
+
+is computed. If all the inputs are not float, the function returns -1. If the
+input dimensions are not compatible, the function returns -2. Note that no 
+error messages are printed, so the user must check the value returned.
+
+The forward and backward differences both estimate the first partial derivative
+with respect to y, but do it with higher resolution (and higher noise 
+sensitivity) than dy. They are useful in iterative algorithms where you do one
+iteration using the forward difference, and the next using the backward. 
+
+Do not use in-place.
+
+\end{ifsdoc}
+\begin{ifsdoc}[fldy_forw]
+2.5.11 fldy_forw
+Forward difference in the y-direction.
+int fldy_forw(IFSIMG inimg, IFSIMG outimg);
+
+Compute the forward difference between pixels in an image. For each pixel,
+
+    outrow[j][i] = (inrow[j][i] - inrow[j-1][i]);
+
+is computed. If all the inputs are not float, the function returns -1. If the
+input dimensions are not compatible, the function returns -2. Note that no 
+error messages are printed, so the user must check the value returned.
+
+The forward and backward differences both estimate the first partial derivative
+with respect to y, but do it with higher resolution (and higher noise 
+sensitivity) than dy. They are useful in iterative algorithms where you do one
+iteration using the forward difference, and the next using the backward. 
+
+Do not use in-place.
+
+\end{ifsdoc}
+\begin{ifsdoc}[fldyy]
+2.5.12 fldyy
+Second partial derivative with respect to y.
+int fldyy(IFSIMG inimg, IFSIMG outimg);
+
+Uses a 3x1 kernel. If all the inputs are not float, the function returns -1. If
+the input dimensions are not compatible, the function returns -2. Note that no 
+error messages are printed, so the user must check the value returned.
+
+Do not use in-place.
+
+\end{ifsdoc}
+\begin{ifsdoc}[fldyz]
+2.5.13 fldyz
+Second partial derivative with respect to y and z.
+int fldyz(IFSIMG inimg, IFSIMG outimg);
+
+Uses a 3x3 kernel. Only meaningful for 3D data. If all the inputs are not float,
+the function returns -1. If the input dimensions are not compatible, the 
+function returns -2. Note that no error messages are printed, so the user must
+check the value returned.
+
+Do not use in-place.
+
+\end{ifsdoc}
+\begin{ifsdoc}[fldz]
+2.5.14 fldz
+First partial derivative with respect to z.
+int fldz(IFSIMG inimg, IFSIMG outimg);
+
+Only meaningful for 3D data. If all the inputs are not float, the function 
+returns -1. If the input dimensions are not compatible, the function returns -2.
+Note that no error messages are printed, so the user must check the value 
+returned.
+
+Do not use in-place.
+
+\end{ifsdoc}
+\begin{ifsdoc}[fldzz]
+2.5.15 fldzz
+Second partial derivative with respect to z.
+int fldzz(IFSIMG inimg, IFSIMG outimg);
+
+Only meaningful for 3D data. If all the inputs are not float, the function 
+returns -1. If the input dimensions are not compatible, the function returns -2.
+Note that no error messages are printed, so the user must check the value 
+returned.
+
+Do not use in-place.
+
+\end{ifsdoc}
+\begin{ifsdoc}[flone_border]
+2.4.1 flone_border
+Set border pixels to one.
+int flone_border(IFSIMG inimg, IFSIMG outimg);
+
+Sets the left-most and right-most columns of the image to one. Then set the top
+row and bottom row to one. Result copied into outimg.
+
+\end{ifsdoc}
+\begin{ifsdoc}[flpad]
+2.4.2 flpad
+Image pad.
+int flpad(IFSIMG inimg, IFSIMG outimg);
+
+Input image is padded by taking the leftmost pixel on each row and replacing it
+by the next-to-leftmost. Same thing on right side, top, and bottom. If 3D, 
+appropriate things are done to the first and last frame.
+
+\end{ifsdoc}
+\begin{ifsdoc}[flplanar]
+2.4.3 flplanar
+Image pad using linear interpolation.
+int flplanar(IFSIMG inimg, IFSIMG outimg);
+
+The leftmost pixel on each line is replaced by what it would be if the first
+three pixels were linearly increasing brightness -- the zeroth pixel is the
+linear interpolation of the first and second. Similar on right side, top, and
+bottom. Only implemented for 2D images.
+
+\end{ifsdoc}
+\begin{ifsdoc}[flrotate]
+2.4.4 flrotate
+Rotate an ifs image about its center.
+int flrotate(IFSIMG inimg, IFSIMG outimg, float angle);
+
+Unlike most other flip functions, flrotate will accept input of any data type.
+It runs faster with unsigned byte and float. It will also rotate 3D IFS images,
+but all frames will be rotated by the same amount. (Thus a color image can be
+rotated). Returns 0 if it runs successfully. Returns -2 if the input and output
+images have different dimensions.
+
+\end{ifsdoc}
+\begin{ifsdoc}[flshx]
+2.4.5 flshx
+Shift image in the x direction.
+int flshx(IFSIMG inimg, int dx, IFSIMG outimg);
+
+Input image is shifted by dx pixels in the x direction and the result is stored
+in outimg. Operation is valid for 3D images.
+
+\end{ifsdoc}
+\begin{ifsdoc}[flshxy]
+2.4.6 flshxy
+Shift image in the x and y directions.
+int flshxy(IFSIMG inimg, int dx, int dy, IFSIMG outimg);
+
+Input image is shifted by dx pixels in the x direction and by dy pixels in the y
+direction. The result is stored in outimg. Operation is valid for 3D images.
+
+\end{ifsdoc}
+\begin{ifsdoc}[flshy]
+2.4.7 flshy
+Shift image in the y direction.
+int flshy(IFSIMG inimg, int dy, IFSIMG outimg);
+
+Input image is shifted by dy pixels in the y direction and the result is stored
+in outimg. Operation is valid for 3D images.
+
+\end{ifsdoc}
+\begin{ifsdoc}[flzero_border]
+2.4.8 flzero_border
+Set border pixels to zero.
+int flzero_border(IFSIMG inimg, IFSIMG outimg);
+
+Sets the left-most and right-most columns of the image to zero. Then set the top
+row and bottom row to zero. Result copied into outimg. Valid for 2D images.
+
+\end{ifsdoc}
+\begin{ifsdoc}[flinv]
+flinv
+Invert an image.
+int flinv(IFSIMG inimg, IFSIMG outimg);
+
+Performs the image complement, which inverts the image. For grayscale images 
+this is equivalent to the maximum brightness value minus each pixel in the 
+image.
+
+\end{ifsdoc}
+
+
+
+
+
+
+
+
+
+\begin{ifsdoc}[bilinterp]
+/*====================bilininterp================*/
+/* arguments, an ifs image, frame, row, column values */
+/* POTENTIAL BUG: does not check if this pixel is next to the end of the image*/
+/* note, this version does not interpolate in the f direction */
+/* set frame = 0 to interpolate a 2D image  */
+float bilininterp(IFSIMG inimage, int frame,float row, float col)
+\end{ifsdoc} 
+\begin{ifsdoc}[bilin]
+/*====================bilininterp================*/
+/* arguments, an ifs image, frame, row, column values */
+/* POTENTIAL BUG: does not check if this pixel is next to the end of the image*/
+/* note, this version does not interpolate in the f direction */
+float bilininterp(IFSIMG inimage, int frame,float row, float col)
+/* set frame = 0 to interpolate a 2D image  */
+\end{ifsdoc} 
+\begin{ifsdoc}[ifsalc]
+1.4.1 ifsalc
+ifsalc { allocate storage (memory)
+cptr=ifsalc(NumBytes); char *cptr; int NumBytes;
+Ifalc is an IFS function used to allocate storage in main memory such as for storing arrays
+and image headers. The storage will be initialized to all zeroes. It is essentially just a
+call to the system function calloc; the only dierence being that ifsalc performs a small
+amount of error checking. If the system cannot allocate the requested amount of storage,
+then ifsalc will return the value NULL, and the external variable ifserr will be set to the
+value IFSENOMEM. If the external variable IFSSLV is not set to the value IFSQUIET,
+then ifsalc will write an error message to stderr if it cant allocate the requested space. If
+IFSSLV is set to IFSFATAL, then ifsalc will also abort your program upon an error.
+\end{ifsdoc}
+\begin{ifsdoc}[ifscigp]
+1.4.2 ifscigp
+ifscigp { get pixel value from a 2-d (possibly complex) image Usage:
+val = int ifscigp(ptri,row,col) IFSHDR *ptri; /*pointer to image header structure */
+int row, col, val; /*coordinates - in pixels - of pixel to examine.*/
+Ifscigp returns - as an int - the value of the pixel at a specied coordinate in a 2-d image.
+If image is complex format, returns the imaginary portion of the number. Known Bugs,
+Special notes:
+This routine does not check to see if the specied coordinates actually are in bounds.
+If the pixel value wont t in an int for example, a large number in a oat or complex
+image ,then results are undened. Maybe you get garbage, maybe your program
+aborts on an overow type of error.
+\end{ifsdoc}
+\begin{ifsdoc}[ifscigp3d] 
+1.4.3 ifscigp3d
+ifscigp3d { get pixel value from a 3d-dimage Usage:
+val = int ifscigp3d(ptri,frame,row,col);
+IFSHDR *ptri; /*pointer to image header structure*/
+int frame, row, col; /*coordinates in pixels of pixel to examine.*/
+Ifscigp3d returns as an integer the value of the pixel at a specied coordinate in a 3-d
+image. If image is complex format, returns the imaginary portion of the number assuming
+it can be converted to an int. Known Bugs, Special notes:
+This routine does not check to see if the specied coordinates actually are in bounds.
+If the pixel value wont t in an int for example, a large number in a oat or complex
+image then results are undened. Maybe you get garbage, maybe your program
+aborts on an overow type of error.
+\end{ifsdoc}
+\begin{ifsdoc}[ifscipp]
+1.4.4 ifscipp
+ifscipp: set pixel value in a 2-d image usage:
+status = ifscipp(ptri,x,y,val);
+IFSHDR *ptri; /*pointer to image headers tructure*/
+int x,y; /*coordinates -- in pixels -- of pixel to examine.*/
+int val;
+int status; /*return status*/
+Returns: IFSSUCCESS or IFSFAILURE
+Ifscipp sets the value of the pixel at a specied coordinate in a 2-d image, where the
+input is an int. If image is complex format, stus the imaginary portion of the number,
+and DOES NOT set the real part to zero.
+Known Bugs, Special notes:
+This routine does not check to see if the specied coordinates actually are in bounds.
+If the pixel value wont t in an int for example, a large number in a oat or complex
+image then results are undened. Maybe you get garbage, maybe your program
+aborts on an overow type of error.
+\end{ifsdoc}
+\begin{ifsdoc}[ifscigp3d]
+1.4.5 ifscipp3d
+ifscipp3d: set pixel in a 3-d image usage:
+status = ifscipp3d(ptri, frame, row, col, val);
+IFSHDR *ptri; int frame, row, col; /*coordinates in pixels of pixel to examine.*/
+int status; /*return status*/
+Returns: IFSSUCCESS or IFSFAILURE
+Ifscipp sets the value of the pixel at a specied coordinate in a 2-d image, where the
+input is a int. If image is complex format, stus the imaginary portion of the number, and
+DOES NOT set the real part to zero.
+Known bugs, special notes:
+This routine does not check to see if the specied coordinates actually are in bounds.
+If the value stored wont t in the output image datatype, then results are undened.
+Maybe you get garbage, maybe your program aborts on an overow type of error.
+\end{ifsdoc}
+\begin{ifsdoc}[ifscipp3d]
+1.4.5 ifscipp3d
+ifscipp3d: set pixel in a 3-d image usage:
+status = ifscipp3d(ptri, frame, row, col, val);
+IFSHDR *ptri; int frame, row, col; /*coordinates in pixels of pixel to examine.*/
+int status; /*return status*/
+Returns: IFSSUCCESS or IFSFAILURE
+Ifscipp sets the value of the pixel at a specied coordinate in a 2-d image, where the
+input is a int. If image is complex format, stus the imaginary portion of the number, and
+DOES NOT set the real part to zero.
+Known bugs, special notes:
+This routine does not check to see if the specied coordinates actually are in bounds.
+If the value stored wont t in the output image datatype, then results are undened.
+Maybe you get garbage, maybe your program aborts on an overow type of error.
+\end{ifsdoc}
+\begin{ifsdoc}[ifscfgp]
+1.4.6 ifscfgp
+ifscfgp: get value of a pixel in a 2-d image. usage:
+val - double ifscfgp(ptri,row,col); IFSHDR *ptri;
+int row,col; /*coordinates (in pixels) of pixel to examine.*/
+Ifscfgp returns (as a oat) the value of the pixel at a specied coordinate in a 2-d image.
+If image is complex format, returns the imaginary portion of the number. Known bugs,
+special notes:
+This routine does not check to see if the specied coordinates actually are in bounds.
+If the pixel value wont t in a double results are undened. Maybe you get garbage,
+maybe your program aborts on an overow type of error. There could be possible
+round o errors.
+\end{ifsdoc}
+\begin{ifsdoc}[ifscfgp3d]
+1.4.7 ifscfgp3d
+ifscfgp3d: get value of a pixel in a 3-d image usage:
+val = (double) ifscfgp3d(ptri,frame,row,col); IFSHDR *ptri;
+int frame, row, col; /*coordinates (in pixels) of pixel to examine.*/
+ifscfgp3d returns (as a double) the value of the pixel at a specied coordinate in a 3-d
+image. If image is complex format, returns the imaginary portion of the number.
+Known bugs, special notes:
+This routine does not check to see if the specied coordinates actually are in bounds.
+If the pixel value wont t in a double results are undened. Maybe you get garbage,
+maybe your program aborts on an overow type of error. There could be possible
+round o errors.
+\end{ifsdoc}
+\begin{ifsdoc}[ifscfpp]
+1.4.8 ifscfpp
+ifscfpp: set value of a pixel in a 2-d image. usage:
+status = ifscfpp(ptri, x, y, val);
+IFSHDR *ptri;
+int x,y; /*coordinates (in pixels) of pixel to examine.*/
+double val; /*the value to stuff.*/
+int status;
+Returns: IFSSUCCESS or IFSFAILURE
+Ifscfpp sets the value of the pixel at a specied coordinate in a 2-d image, where the
+input is a oat. If image is complex format, stus the imaginary portion of the number.
+Known Bugs, Special notes:
+This routine does not check to see if the specied coordinates actually are in bounds.
+If the value stored wont t in the output image datatype, then results are undened.
+Maybe you get garbage, maybe your program aborts on an overow
+\end{ifsdoc}
+\begin{ifsdoc}[ifscfpp3d]
+1.4.9 ifscfpp3d
+ifscfpp3d: sets the value of a pixel in a 3-d image (This is a completely new version of
+ifsfpp which handles 3-d images.) usage:
+status = ifscfpp3d(ptri, frame, row, col, val);
+IFSHDR *ptri;
+int frame, row, col; /*coordinates (in pixels) of pixel to examine.*/
+double val; /*the value to stuff.*/
+int status;
+Returns: IFSSUCCESS or IFSFAILURE I fscfpp3d sets the value of the pixel at a
+specied coordinate in a 3-d image, where the input is a oat. If image is complex format,
+stus the imaginary portion of the number.
+Known Bugs, Special notes:
+This routine does not check to see if the specied coordinates actually are in bounds.
+If the value stued wont t in the output image datatype, then results are undened.
+Maybe you get garbage, maybe your program aborts on an overow type of error.
+\end{ifsdoc}
+\begin{ifsdoc}[ifscigp3d]
+1.4.10 Ifsclose
+ifsclose: close an open le Usage:
+rc = ifsClose(File);
+FILE *File;
+int rc;
+Ifsclose, an ifs internal function seldom used by typical programmers, is identical to the
+standard I/O library function fclose, except that it will avoid closing File if File corresponds
+to stdin, stdout, or stderr. If File is NULL, ifsclose returns -1, else it just returns whatever
+value fclose would return. Ifsclose is supplied as a complement to ifsOpen since the latter
+function may return stdin or stdout in some circumstances, and the user typically does not
+want to close these les.
+\end{ifsdoc}
+\begin{ifsdoc}[ifscreate]
+1.4.11 ifscreate
+ifscreate: create an IFS image Usage:
+img = ifscreate(type, len, flags, structsize);
+IFSHDR *img;
+char *type;
+int len[];
+int flags;
+int structsize;
+Ifscreate is used to create a new IFS image or image header. Space for the header is
+automatically allocated, and a pointer to the header is returned. Various elds in the header
+structure will be set to default values. Space for the actual data may also be allocated,
+depending on the value of the ags variable. If space for the data array is allocated, it will
+be lled with zeros. If the image can not be created, ifscreate returns the value NULL,
+and the external variable ifserr will be set to some error code, as given in the #include
+le ifserr.h . The image as created will not have any tail structure associated with it. The
+arguments to ifscreate are:
+typeThe data format for individual pixels, such as byte or double. The valid data types
+are listed in a later section of this manual. If the data type is not recognized by
+IFS, then ifscreate will return NULL, and ifserr will be set to the code IFSE BAD
+DTYPE.
+lenAn n+1-length integer array the rst element (len[0]) gives the number of dimensions
+for the image, the remaining elements give the length for each dimension of the
+image being created. This is in exactly the same format as the arrays returned by
+the function ifssiz. The lengths are given in terms of ascending rank for the image.
+Images are stored in standard C storage order: the column or x index changes most
+rapidly when scanning through memory, hence this dimension has rank 1. The row
+or y index has rank 2, the frame or z index has rank 3, and so on. I.e., the second
+element of the array (len[1]) gives the number of columns of the image, len[2] is the
+number of rows, etc.
+agsThe various bits of this argument determine precisely what is and is not allocated
+when generating the image. If ags = IFS CR ALL or IFS CR DATA, then storage
+space for the image is allocated, as well as storage for the image header. In this case
+the eld img->ifsptr points to the data storage. If ags = IFS CR HDR then only
+space for the image header is allocated. The eld img->ifsptr will be set to NULL.
+The user must supply an array to store the image in, and set img->ifsptr to point to
+this array. Note: versions 4.0, 5.0, and 6 of ifscreate will ALWAYS allocate space for
+the image header; the ag IFS CR HDR is not really examined, and is only intended
+for possible future expansion. All that is really checked is the IFS CR DATA bit.
+The ag IFS CR ALL is the combination of IFS CR DATA and IFS CR HDR and is
+probably the best ag to use if one wants data space allocated.
+structsizeThis argument is only needed if type is struct, in which case it gives the size of
+a single data element (structure) in bytes. If type is not struct this argument should
+be set to 0.
+Example of using ifscreate with a data type of struct:
+/* Create a 2-d image with 20 rows and 30 columns */ /* and a 1-d array of 10 structures. */
+#include <ifs.h>
+main()
+{ IFSHDR * img, * strimg;
+int lengths[3]; IFSHDR * ifscreate();
+typedef struct { int red; int green; int blue; } RGB; . . . /* create 2D byte array */
+lengths[0] = 2; /* Image will be 2D */
+lengths[1] = 30; /* Number of columns (width; x-dimension) */
+lengths[2] = 20; /* Number of rows (height; y-dimension) */
+img = ifscreate("ubyte", lengths, IFS_CR_ALL);
+if (img == NULL) { /* error processing code */
+} . . . /* create 1D structure array */ lengths[0] = 1;
+lengths[1] = 10;
+strimg = ifscreate("struct",lengths,IFS_CR_ALL,sizeof(RGB)); . .
+\end{ifsdoc}
+\begin{ifsdoc}[ifs2ipl]
+
+Routines which are compatible with openCV
+In order to make use of the capabilities of openCV, and still retain the usefulness of IFS,
+several new functions are available to go between the two formats. openCV uses an image
+format called IPL, which is very similar to ifs in many ways. Most openCV functions do
+not support all the data formats that ipl supports, and ipl does not support some of the
+data types that ifs supports. In particular, the data typescomplex short, andcomplexare
+supported by ifs, but not by ipl.
+1.4.12 ifs2ipl
+Converts an ifs image to an ipl-format image of the same data type. It returns a pointer
+to an ipl image
+IplImage *ifs2ipl(IFSIMG inputimage);
+Note that the old image is NOT deleted, but a new image is created using memory
+allocation. This is a potential memory leak unless the user is careful. If the old ifs image
+is no longer needed, it can be deleted using
+ifsfree(oldimage,IFS_FR_ALL);
+which will delete the image, and the header and the tail (if there is a tail).
+\end{ifsdoc}
+\begin{ifsdoc}[ipl2ifs]
+1.4.13 ipl2ifs
+Converts an ipl image to an ifs-format image. It returns a pointer to an ifs image
+IFSIMG ipl2ifs(IplImage *inputimage);
+Note that the old image is NOT deleted, but a new image is created using memory
+allocation. This is a potential memory leak unless the user is careful. If the old image is
+no longer needed, it can be deleted using
+cvReleaseImage(&imagepointer);
+\end{ifsdoc}
+\begin{ifsdoc}[flpg1]
+2.6.1 flpg1: single input FLIP functions
+This program allows the user to access multiple flip library functions from the command line.
+Switches:
+    -i inputfilename
+    -o outputfilename
+    -f functionname
+       clip  - clips the image
+       divs  - divides by a scalar
+       exp   - takes the exponential of each pixel of the image
+       log   - takes the natural log of each pixel of the image independently
+       mults - takes the exponential of each pixel of the image
+       neg   - Negate image pixels
+       rec   - Reciprocal of an image
+       sq    - Square pixel values
+       curv  - Curvature at every point
+       sqrt  - Square root of pixels
+       subs  - Scalar subtract. Subtract a scalar from every element of an image
+    -s optional, function-specific parameter Example:
+flpg1 -i footprint.ifs -o footdarker.ifs -f subs -s 2.0
+ \end{ifsdoc}  
+ \begin{ifsdoc}[clip]
+ clip: see documentation for flpg1
+ \end{ifsdoc}
+  \begin{ifsdoc}[divs]
+ divs: see documentation for flpg1
+ \end{ifsdoc}
+  \begin{ifsdoc}[exp]
+ exp: see documentation for flpg1
+ \end{ifsdoc}
+  \begin{ifsdoc}[log]
+ log: see documentation for flpg1
+ \end{ifsdoc}
+  \begin{ifsdoc}[mults]
+ mults: see documentation for flpg1
+ \end{ifsdoc}
+  \begin{ifsdoc}[neg]
+ neg: see documentation for flpg1
+ \end{ifsdoc}
+  \begin{ifsdoc}[rec]
+ rec: see documentation for flpg1
+ \end{ifsdoc}
+  \begin{ifsdoc}[sq]
+ sq: see documentation for flpg1
+ \end{ifsdoc}
+  \begin{ifsdoc}[curv]
+ curv: see documentation for flpg1
+ \end{ifsdoc}
+  \begin{ifsdoc}[sqrt]
+ sqrt: see documentation for flpg1
+ \end{ifsdoc}
+  \begin{ifsdoc}[subs]
+ subs: see documentation for flpg1
+ \end{ifsdoc}
+   \begin{ifsdoc}[ifsany2any]
+ 2.7.2 ifsany2any
+ Convert any ifs image to any data type. Usage:
+ status=ifsany2any(inputimage,outputimage);
+** FUNCTION: convert data type of images, point by point
+ ** CALL: ifsany2any (in1,out)
+ **       where each argument is an ifs image
+ ** RETURNS: 0 if successful,
+ ** ** ** ** **
+     -1 if both arguments do not have the same dimensions
+         -2 if input data type unsupported (complex)
+        -3 if one input has type complex and output is real
+        -4 if  input is real and output is complex
+        -5 if a zero occurs in the input
+ \end{ifsdoc}
+    \begin{ifsdoc}[chainHull2D]
+ 3.1.1 chainHull 2DFinds the convex hull of a set of 2D points. The set is an array of structures of type Point. Where Point is defined by typedef struct float x, float y Point; Usage:count = chainHull_2d(Point *S, int n, Point *H);count is an integer, the number of points in the convex hull (cannot be more than n)n in the number of points in the input data se// S is the array of input points// H will be filled in by the subroutine, the points in the convex hullThis software was copied from freeware:http://softsurfer.com/Archive/algorithm 0109/algorithm 0109.htm#chainHull 2D%28%29 Note: the x,y pairs must be sorted on x, smallest first. If two pairs have the same x co- ordinate, then those need to be sorted by y. You can use the Unix soft program if that is convenient, or any of a large selection of sort subroutines.
+  \end{ifsdoc}
+\begin{ifsdoc}[InsideTriangle]3.1.2 InsideTriangleDetermine if a point is inside a triangle Usage:int InsideTriangle(int row, int col, double **X);X is an array of doubles created withX=dmatrix(1, 2, 1,3);The three columns of X refer to the coordinates of the 3 vertices of the triangle. The 1,1 entry in the matrix is the row coordinate of the first vertex, The 1,1 entry in the matrix is the column coordinate of the first vertex
+ \end{ifsdoc}
+   \begin{ifsdoc}[InterpolateTriangle]3.1.3 InterpolateTriangleGiven three points in an input image, and a corresponding 3 points in an output image, the second triangle will be deformed and filled in to match the first. Usage:status = InterpolateTriangle (inimg, outimg, X,U,IG);IFSIMG inimg, outimg;double **X, **G;int IGX and U are matrices created using the function dmatrix. IG is a switch which, if nonzero, will result in sub-pixel interpolation. (At the time of this writing, this feature is not implemented.) The matrix manipulation functions are in the flip library. See section 2.2.If the input image is three-dimensional and has three frames, it will be treated as color. Three dimensional images are interpolated only in a 2D sense.Simple Example:double **X, **Y;X=dmatrix(1,2,1,3); // X is a matrix with rows numbered                                  //from 1 to 2 and columns numbered from 1 to 3.U=dmatrix(1,2,1,3);X[1][1] =0; X[2][1] = 0; // one corner of undistorted imageU[1][1] =0; U[2][1] =0; // this point is not movedX[1][2] =0; X[2][2] = 10; // second corner of triangle, ten units to right of previousU[1][2] =0; U[2][2] =10; // this point is not distortedX[1][3] =10; X[2][3] = 5; // third corner of triangle, ten units down                                         //and 5 units over from firstU[1][3] =15; U[2][3] =10; // this point is moved, stretching                                          // the triangle up and to the rightInterpolateTriange(inputimge, outputimage,X,U,0);
+ Real Example#include <ifs.h>#include <ifsmatrix.h>int main(int argc, char *argv[]){IFSIMG inimg;IFSIMG outimg;int row,col,nr,nc;int len[4];double **X, **U;X=dmatrix(1,2,1,3);U=dmatrix(1,2,1,3);inimg = ifspin(argv[1]);len[2]=nr = ifsdimen(inimg,1);len[1]=nc = ifsdimen(inimg,0);len[0]=inimg->ifsdims; // two dimensionalif(len[0]== 3) len[3]=ifsdimen(inimg,2);outimg = ifscreate(inimg->ifsdt,len,IFS_CR_ALL,0);{float ulr,ulc,urr,urc,llr,llc,lrr,lrc,mr,mc;ulr =0;ulc =0;urc=nc-1;urr=0;llr=nr-1;llc =0;lrr=nr-1;lrc=nc-1;mr = nr/2; mc =0;X[1][1] = ulr;X[2][1] =ulc;X[1][2] = urr;X[2][2] =urc;X[1][3] = mr;X[2][3] =mc;U[1][1] = ulr;U[2][1] =ulc;U[1][2] = urr;U[2][2] =urc;U[1][3] = 90;U[2][3] =mc;InterpolateTriangle(inimg,outimg,X,U,0);X[1][1] = urr;X[2][1] =urc;X[1][2] = mr;X[2][2] =mc;X[1][3] = lrr;X[2][3] =lrc;U[1][1] = urr;U[2][1] =urc;U[1][2] = 90;U[2][2] =mc;U[1][3] = lrr;U[2][3] =lrc;
+94 CHAPTER 3. IMAGE PROCESSING SUBROUTINESInterpolateTriangle(inimg,outimg,X,U,0);X[1][1] = mr;X[2][1] =mc;X[1][2] = lrr;X[2][2] =lrc;X[1][3] = llr;X[2][3] =llc;U[1][1] = 90;U[2][1] =mc;U[1][2] = lrr;U[2][2] =lrc;U[1][3] = llr;U[2][3] =llc;InterpolateTriangle(inimg,outimg,X,U,0);}ifspot(outimg,argv[2]);}Example makefile using InterpolateTriangledistort1: distort1.ccc -o distort1 distort1.c -I/Users/wes/src/ifs/MacX64/hdr \/Users/wes/src/ifs/MacX64/ifslib/libiptools.a  \/Users/wes/src/ifs/MacX64/ifslib/libifs.a \/Users/wes/src/ifs/MacX64/ifslib/libflip.a
+ \end{ifsdoc}
+   \begin{ifsdoc}[cubic_int]3.1.4 cubic splinesusage: void cubic_int(int n,int m,float* f, float* t, float* fn, float* tn)n is the number of points in the input arrays (f and t),m is the number of points in the output arrays (fn and tn) both the time arrays, t and tn must be initializedexample initialization// initialize tfor (i=0; i<N; i++) { f[i]=sin(2?3.14?i/(float) (N?1)); t [ i ]=( float ) i ;}//initialize tnstepsize=(N?1)/(float) (M?1); for (i=0; i<M; i++) {tn[ i]=t[0]+i?stepsize ;?IFS library: libiptools.a
+fn [ i ]=0.0;} ?/void cubic int(int n,int m,float? f, float? t, float? fn, float? tn) 3.1.5 Resampling CurvesResample a line or curve to ensure uniform (arc-length) sampling. Accepts a set of points, x-y pairs, and produces a set of x-y pairs. There are two functions which must be called to use this feature: resampleinit and resamplesub. Usage:#include <resample.h>struct rs * resampleinit(int m,int n);resampleinit sets up a structure in which to hold information about the resampled data. m is the number of points in the input image (the number of rows in the array). n is the number of points into which to divide the resampled output image. Once initialized, the resample function isvoid resamplesub(int m, int n, double **x, double **y,struct rs *p)The first two arguments are the same as above: m is the current number of points, n will be the number of points on the resampled curve. x and y are matrices, x2,m,y2,n holding the actual data. These are arrays created by resampleinit using dmatrix (see section 2.2.1). Their indices run from 1 to 2 (for the first index) and 1 to m or n. That is, they are created usingx = dmatrix(1,2,1,m);y = dmatrix(1,2,1,n);.Note that while these functions are in libiptools, the matrix manipulation functions arein libflip, so you will need to link with both those libraries.Example resampleIn the example below is shown how to set up and call the two resample functions. It does not include details about how to read and write the ASCII input and output files.#include <math.h>#include <stdio.h>#include <ifsmatrix.h>#include <resample.h>#define EPSILON .0001?
+int main(int argc, char *argv[]){double **x; /* the input shape, it has m points */double **y; /* the output shape, it will have n points, uniformly spaced in arc length */* the shapes above are pairs of floats. The even numbered ones are x coords, the odd yint m;          /* m is the number of points in the input shape */int n;          /* n is the number of points we demand the output shape will have */struct rs *rsdata;  // this is the structure that will persist between resampleinit// and resamplesubdouble median;FILE *fp, *fopen();int j;int getshape(char *, double **, double *, double); // function to read the input fileint getnumberofpoints(char *);void clparse(int,char *[],struct clp *);// function to parse command line, not providedvoid resamplesub(int ,int,double **,double **,struct rs *);struct rs *resampleinit(int,int);/* call the read subroutine to read in the x,y pairs of points *//* we pass the address of the shape pointer to getshape because the mallocwill be done inside  getshape */m = getnumberofpoints(infile); // read the input file to get the mn = NUMBEROFOUTPUTPOINTS;x = (double **)dmatrix(1,m+1,1,2);y = (double **)dmatrix(1,m+1,1,2);m = getshape(infile,x,&median,(double) 0.0);  // read the input filersdata = resampleinit(m,n);   //inititalize the structresamplesub(m,n,x,y,rsdata);/* write out the y array *//* actually write the x array, since we have already swaplped pointers */fp = fopen(outfile,"w");for(j = 1; j <=NUMBEROFOUTPUTPOINTS; j++){fprintf(fp,"%lf %lf\n",x[j][1],x[j][2]);
+}fclose(fp);return 0;}
+ \end{ifsdoc}
+   \begin{ifsdoc}[fifo]3.1.6 Operations on FIFOÕsThe following operations are useful in manipulating first-in-first-out memories, or queues. All of them use a structure which contains information about the queue. The structure has the following form:struct myque{int int int int int int?q; front ; rear ; start ; end ; count ;};fifo init; initialize the queuecall:void fifo_init(int D,struct myque *queue);fifo add; add a new number to the queuecall:int fifo_add(int item ,struct myque *queue);fifo removeRemove a number from the queue and return it. call:int fifo_remove(struct myque *queue);fifo emptyReturn true (nonzero) or false (zero) if the queue is or is not empty call:int fifo_empty(struct myque *queue);???? \end{ifsdoc}
+   \begin{ifsdoc}[WaterShed]3.1.8 WatershedsA watershed is the boundary between two basins.int ifs_WaterShed(IFSIMG im,IFSIMG om);Both images must be ifs images of type int.The output image is a segmented version of the input image. It will contain uniquelylabeled regions. WaterShed points will have brightness zero. Note that although watershed pixels are in principal the boundaries of basins, they are not necessarliy a single pixel thick. The WaterShed program (see section ??) adds additional features by erasing watershed pixels and assigning them to regions. The WaterShed program also provides the user with the ability to pseudocolor the output image.
+    \end{ifsdoc}
+   \begin{ifsdoc}[ifs_ccl]3.1.9 ifs_cclThis function performs connected components on an image. It is the function called by the program named ccl. The program ccl simply reads the command line, fills in a structure from the command line, allocates some memory, and calls this function.The declaration for the call isvoid ifs_ccl(IFSIMG, IFSIMG, IFSIMG,struct PAR *parptr);Because there are many options, the structure is rather long. The process of defining the structure and filling it in is given below. The user is advised to simply cut and paste the block below. This block includes the call to ifs ccl, passing the images and the structure. The connect type field allows the user to specify which type of connivity is used to determine when two pixels/voxels are considered neighbors. In three dimensions, the three types of connectivity are shown in Figure 3.1. In two dimensions, FACE is 4-connected, EDGE is 8-connected.{ /? start of the block ?///this is the definition of the structure???
+?Figure 3.1: Three types of connectivity may be used by the connected components function in 3D images. In 2D images, FACE is equivalent to 4-connected, and EDGE is equivalent to 8-connected
+struct PAR {char InFileName[100]; // not needed if called as a function char OutFileName[100];// not needed if called as a functionfloat lower limit ;float upper limit ;int connect type ;float conn threshold ; // connection threshold . two pixels with// low limit of points considered , usually zero/? upper limit of points considred , usually 255 ?/??/? EDGE(2) ,FACE(1) or VERTEX(4) ?/??// greater difference will not be connectedint roi set ; // set to one for Region of Interestint roi seed [3]; /? roi seed location , 3 numbers ?/int roi label ; /? label for region of interest ?/int roi seg out ; /? segment out the roi components ?/ int roi seg value ; /? voxel values for region of interest ?/ int lower bg label ; /? label used for lower background ?/int upper bg label ; /? label used for upper background ?/int min label ; /? minimum label used ?/int max label ; /? maximum label used ?/int cam size ; /? size of content addressable memory array ?/ unsigned int ?cam; /? pointer to the cam;?//? the following 3 numbers could be obtained from the imagebut are included in the structure only for efficiency of access?/??????????????int nr ; int nc ; int nf ;//number of rows //number of columns // number of frames};struct PAR mypar,? parptr ; // an instance of the structure and a pointer to ivoid ifs ccl (IFSIMG, IFSIMG, IFSIMG, struct PAR ?); unsigned int ?cam ptr ;int i;par=&mypar; // itialize the pointerpar?>InFileName[0]=0; // not needed if called as a function par?>OutFileName[0]=0;// not needed if called as a function??par?>lower limit=0;par?>upper limit=1;par?>connect ? type=1;par?>conn threshold=0; // connection threshold . two pixels with par?>roi set=0; // set to one for Region of Interest par?>roi seed [0]=0; /? roi seed location , 3 numbers ?/ par?>roi label=0; /? label for region of interest ?/// low limit of points considered , usually zero /? upper limit of points considred , usually 255 ?/??/? EDGE(2) ,FACE(1) or VERTEX(4) ?/????par?>roi seg out=0; /? segment out the roi components ?/ par?>roi seg value=1; /? voxel values for region of interest ?/ par?>lower bg label=1; /? label used for lower background ?/ par?>upper bg label=500; /? label used for upper background ?/ par?>min label=1; /? minimum label used ?/par?>max ? label =5000; /? maximum l a b e l used ?/par?>cam size=64000; /? size of content addressable memory array ?/ par?>cam=0; /? pointer to the cam initialized later?//? the following 3 numbers could be obtained from the imagebut are included in the structure only for efficiency of access?/par?>nr=ifsdimen ( inimg , 1 ) ; //number of rows par?>nc=ifsdimen ( inimg , 0 ) ; ; //number of columns par?>nf=1; // number of frames/? now that the structure is initialized , we are ready to call the connected components function ?//? i n i t i a l i z e the content?addressabe memory?/ /?????allocate CAM and cardinality arrays ?/par?>cam = (unsigned int ?) calloc(par?>cam size , sizeof(int)); if (par?>cam==NULL) {printf ( ÓError : Unable to allocate %d element CAM\nÓ , par?>cam size );e x i t ( ?1); }/?????initialize CAM ?/cam ptr = par?>cam;for(i=0; i<par?>camsize; i++)?camptr++=i;/? notice ccl takes three image inputs , however , the third oneis only touched if ROI processing is requested, so we use outimg?//? FINALLY, we call it ! ?/ifs ? ccl (inputimg , imageafterccl , outimgwithROI , parptr );}
+ \end{ifsdoc}
+   \begin{ifsdoc}[ifscfft2d]3.1.10 ifscfft2difscfft2d - perform in-place 2D fast Fourier transform Usage:?????????????????????
+len = cfft2d(img_ptr, type) IFSHDR * imgptr; int type;Ifscfftt2d performs an in-place 2-D fast Fourier transform on a complex ifs image. The transform is performed in place on 8BYTE-PER-PIXEL (complex float) data only! Note that ffts only work on images of dimension 2n?2n . The second argument is an indicator for forward or inverse fft, -1 for forward, +1 for inverse. If there is some error, the subroutine exits to the user with an error message. Possible errors are:¥ Image dimensions are not a power of two ¥ Image data type is not complex float
+ \end{ifsdoc}
+   \begin{ifsdoc}[ifsc2mag]3.1.11 ifsc2imagifsc2imag - extract imaginary part of a complex ifs image, point by point Usage:val = ifsc2imag (in1, out) int val; IMSHDR *in1,*out;RETURNS 0 if successful, -1 if both arguments do not have same dimensions -2 if data type unsupported (complex double) CAUTION: if output is type char, values greater than 255 will be clipped to lie between 0 and 255.
+    \end{ifsdoc}
+   \begin{ifsdoc}[ifsc2mag]3.1.12 ifsc2magifsc2mag - return magnitude of a complex ifs image, point by point Usage:val = ifsc2mag (in1, out) int val; IMSHDR * in1,*out;RETURNS 0 if successful, -1 if both arguments do not have same dimensions -2 if data type unsupported (complex double) CAUTION: if output is type char, values greater than 255 will be truncated to 255.
+    \end{ifsdoc}
+   \begin{ifsdoc}[ifsc2phase]3.1.13 ifsc2phaseifsc2phase - return phase of a complex ifs image, point by point Usage:val = ifsc2phase (in1,out) int val; IMSHDR *in1,*out;RETURNS 0 if successful, -1 if both arguments do not have same dimensions, -2 if data type unsupported (complex double) CAUTION: if output is type char, values greater than 255 will be truncated to 255.
+    \end{ifsdoc}
+   \begin{ifsdoc}[ifsc2real]3.1.14 ifsc2realifsc2real - return real part of a complex ifs image, point by point Usage:val = ifsc2real (in1,out) int val; IMSHDR *in1,*out;RETURNS 0 if successful, -1 if both arguments do not have same dimensions -2 if data type unsupported (complex double) CAUTION: if output is type char, values greater than 255 will be truncated to 255.
+    \end{ifsdoc}
+   \begin{ifsdoc}[insert2Dinto3D]
+ ifsInsert2Dinto3DifsInsert2Dinto3D - inserts a 2D image as a single frame into a 3D ifs image Usage:val = ifsInsert2Dinto3D (IFSIMG in,IFSIMG out,int frame)RETURNS 0 if successful, -1 if both arguments do not have same dimensions or if data type unsupported (complex double) CAUTION: if output is type char, values greater than 255 will be converted to char.
+  \end{ifsdoc}
+   \begin{ifsdoc}[ifsmult]3.1.16 ifsmultifsmult - multiply two ifs images, point by point Usage:int ifsmult (in1, in2,out) IFSHDR *in1,*in 2,*out;RETURNS 0 if successful, -1 if all three arguments do not have same dimensions -2 if data type unsupported (complex double) -3 if one input has type complex and output is real -4 if both inputs are real and output is complex CAUTION: if output is type char, values greater than 255 will be truncated to 255. NOTES: if one image is real and the other complex, the output must be complex and the real parts of the images will be added.
+    \end{ifsdoc}
+   \begin{ifsdoc}[ifsrecip]
+   3.1.17 ifsrecipifsrecip take reciprocal of an ifs image, point by point Usage:int ifsrecip (in1,out) IFSHDR *in1,*out;RETURNS 0 if successful, -1 if both arguments do not have same dimensions -2 if data type unsupported (complex double) -3 if one input has type complex and output is real -4 if both inputs are real and output is complex CAUTION: if output is type char, values greater than 255 will be truncated to 255. NOTES: if one image is real and the other complex, the output must be complex and the real parts of the images will be added.
+    \end{ifsdoc}
+   \begin{ifsdoc}[ifssub]
+ 3.1.18 ifssubifssub subtracts two ifs images, point by point. The second argument is subtracted from first. Usage:int ifssub (in1, in2, out) IFSHDR *in1,*in2,*out;RETURNS 0 if successful, -1 if all three arguments do not have same dimensions -2 if data type unsupported (complex double) -3 if one input has type complex and output is real -4 if both inputs are real and output is complex CAUTION: if output is type char, values greater than 255 will be truncated to 255. NOTES: if one image is real and the other complex, the output must be complex and the real parts of the images will be added.
+  \end{ifsdoc}
+   \begin{ifsdoc}[ifsvidscale]
+3.1.19 ifsvidscaleifsvidscale converts an ifs image, of any data type, to an unsigned char ifs image. The brightness values are scaled to lie between 0 and 255. Usage:int ifsvidscale (IFSHDR in1, IFSIMG out,float *minvalptr,float *maxvalptr, int switch3d);The two arguments minvalptr and maxvalptr are pointers to floats, and will be returned by ifsvidscale, reporting the minimum and maximum of the input images, respectively.The switch3d argument, if not ==0, indicates that the frames of the image should be scaled independently. Note that in this case, the minvalptr and maxvalptr apply only to the last frame in the sequence.RETURNS 0 if successfulThe function will scale minimum brightness - maximum brightness to 0 to 255. NOTES: The second image must be unsigned char.
+ \end{ifsdoc}
+   \begin{ifsdoc}[ifscolormap]
+3.2.1 ifscolormapThe function ifscolormap is similar to the program ColorMap in that it allows you to assign a number of different colors to an 8-bit, unsigned image. That is, each of the possible 256 brightness levels will be assigned a color. There are many ways to assign an R, G, and B value to a single pixel brightness. The function offers several different ways to interpret the brightnesses.Usage:void ifscolormap( IFSIMG inputimage, IFSIMG outputimage, int  X);Where inputimage is an unsigned 8 bit fs image, and X is an integer between 0 and 6 which?tells 0 1 2 3 4 5 6the program which color map to use as follows: grey scaleinverse gray scalebronsonhot metal heated spectrum lograndomThe input image must be unsigned 8 bit, since there are only 256 unique colors . The input image must be two-dimensional.IFS library: libiptools.a
+The output file must be a 3 D unsigned 8 bit ifs image, with 3 frames, with the usual interpretation that frame 0 is red, frame 1 is green, and frame 2 is blue. The function does not create this image, a pointer to it is passed by the calling function.example useint len[4];IFSIMG inimage,outimg;extern void ifscolormap(IFSIMG,IFSIMG,int);...len [0]=3;len[1]=ifsdimen(inimage ,0); // get number of cols len[2]=ifsdimen(inimage ,1); // get number of rows len[3]=3; // image will have 3 frames outimg=ifscreate(Óu8bitÓ,len ,IFS CR ALL,0); ifscolormap(inimg ,outimg ,3); // use a hotmetal color map...ifsCVpot ( outimg , Ómyimage . pngÓ ) ;...
+ \end{ifsdoc}
+   \begin{ifsdoc}[Build_Lower_Complete]3.2.2 Lower Complete ImagesTo understand this, first recall that in a digital image, a maximum is a connected set of pixels, which are all the same brightness, with the property that no pixel in this set is adjacent to any brighter pixel. A minimum is a similarly defined set. A plateau is a connected set of pixels, which are all the same brightness, but which has at least one neighboring pixel which is brighter and one which is darker. Plateaus cause probems to some algorithms.A lower complete image is one in which every pixel is either a maximum, a minimum, or has at least one lower neighbor. That is, a lower complete image has no plateaus. This function provides that capability.void Build_Lower_Complete(IFSIMG inimage,IFSIMG LowerCompleteImage)The input, inimage, must be unsigned 8 bit. The output, LowerCompleteImage, must be type int. The brightness values will be changed to ensure the image is lowercomplete.
+    \end{ifsdoc}
+      \begin{ifsdoc}[zoomupdown]3.2.3 zoomupdownWill zoom an image Example usage:??    img1 = ifspin("/Users/wes/Images/asterix256.ifs");    len[0]=2;    len[1]= ifsdimen(img1,0) * 2;    len[2] =ifsdimen(img1,0) * 1;    img2 = ifscreate(img1->ifsdt,len,IFS_CR_ALL,0);    zoomupdown(img1,img2);The input image will be zoomed to the size of the output image. The output image will be overwritten with the zoomed version of the input image. The two images do not have to have proportional dimensions. For example, inputimage could be 512 x 512 and output image could be 640 x 480. Of course, unless the images have proportional dimensions, the output image will be distorted.
+       \end{ifsdoc}   \begin{ifsdoc}[gaussrand]
+       3.3.1 gaussranddouble gaussrand()returns a Gaussian-destributed random number with standard deviation of one and mean of zero.
+ \end{ifsdoc}
+    \begin{ifsdoc}[MinimumRegion]
+ 3.1.7 MinimumRegion
+This function finds and marks all minimum regions in an image.
+Every pixel in the output image either is a zero or has a distinct label
+A minimum region is all the same brightness and has no neighbors darker
+ than itself. This function only runs on Unsigned Char images
+This function is an almost direct translation from algorithm 4.6 of
+ Roerding and Meijster
+
+Usage:
+int MinimumRegion(IFSIMG img, IFSIMG labelimg)
+
+Note: the source code for MinimumRegion is part of the source module Watershed.c
+ \end{ifsdoc}
+\begin{ifsdoc}[ifsvidscale]
+3.1.19 ifsvidscale
+ifsvidscale converts an ifs image, of any data type, to an unsigned char ifs image. The
+brightness values are scaled to lie between 0 and 255. 
+Usage:
+int ifsvidscale (IFSHDR in1, IFSIMG out,float *minvalptr,float *maxvalptr, int switch3d);
+
+The two arguments minvalptr and maxvalptr are pointers to floats, and will be returned
+by ifsvidscale, reporting the minimum and maximum of the input images, respectively.
+
+The switch3d argument, if not == 0, indicates that the frames of the image should be
+scaled independently. Note that in this case, the minvalptr and maxvalptr apply only to
+the last frame in the sequence.
+
+RETURNS 0 if successful
+
+The function will scale minimum brightness - maximum brightness to 0 to 255.
+NOTES: The second image must be unsigned char.
+
+\end{ifsdoc}
+\begin{ifsdoc}[qsyn]
+4.1 qsyn - Synthesize a range image
+usage:
+qsyn -o rangeoutfile.ifs -l labeloutfile.ifs -f infile.q\\
+-f is a flag meaning create a floating point depth image\\
+-l arg means create a label image and name it arg\\
+-o arg means create a depth image and name it arg\\
+
+The current release of qsyn DOES accept comments lines starting with a #.\\
+
+Qsyn accepts input in the form of the equation of a quadric surface and instructions for rotating and translating that
+surface, as well as commands for how to limit the extent of surfaces. For example you can use quadric surfaces as
+constraints on the extent of surfaces. 
+
+qsyn is too complex to be described in this help file, so read the ifs manual.
+\end{ifsdoc}
+\begin{ifsdoc}[matte]
+4.3 Matte - synthesize luminance images
+Name: matte.c
+Action: Produces a matte luminance image given a range image and one or more light
+sources of any brightnesses. That is, the range image is modeled as being a Lambertian reflector. matte converts a 2-D range image into a matte luminance image.
+USAGE: usage: matte -i infile -o outfile -s
+FLAGS: command line args are... -h help-screen -i Input file name -o output file name -s Ignore shadowing 
+LIGHTS: This program generates a matte image illuminated by a set of light sources that you specify. The user is prompted for the locations of the light sources.
+Notes
+¥ Comments (like in the example) arenÕt allowed
+¥ Be careful with the z coordinate. Large positive z values place the light source in front of the object: good. Negative z, or even small positive z, may place the light BEHIND the object: (bad), which may generate a null image.
+¥ 50 lights max.
+Example:
+matte -i pcblead.ifs -o leadbrightness.ifs
+Enter number of light sources>2
+For each source, enter position (col,row,height) and brightness>64 64 200 10 20 30 200 2
+end of example. 
+ALGORITHM
+Read lights from user (or redirect of standard input) call ifsderiv to compute gradients of range image for every pixel Compute normal to this pix; Compute vector from this pix to each light; Compute cosine of angle between normal and lights; Light this pix by summing the source brightness times the cosine.
+\end{ifsdoc}
+\begin{ifsdoc}[pcon]
+6.2 pcon - Piecewise-constant image noise removal
+This program does Edge-preserving smoothing and noise removal using a piecewise-constant prior.
+USAGE:
+ pcon [switches] .
+Switchs are -g input filenname, where infilename is an ifs image; default: the null string
+-s sigma The std dev of the noise. default: 1.0
+-r r step size, smaller is more stable but slower. default: 0.02
+139
+140 CHAPTER 6. PROGRAMS FOR ANALYZING IMAGES
+-b b The coefficient in front of the prior term. Beta of Eq. 6.41 in Snyder and Qi
+-t t1 initial temperature. default: 2.0
+-T t2 final temperature default: 0.0005
+-l dlt rate by which the temperature drops. default: 0.99
+-o outcount output a temporary file every this many iterations. default: 50
+example: pcon -g foofile.ifs -s 3
+\end{ifsdoc}
+\begin{ifsdoc}[plin]
+6.3 plin - Piecewise-linear image noise removal
+This program does Edge-preserving smoothing and noise removal using a piecewise-linear prior.
+USAGE:
+ plin -i infile [-s sigma] [-r stepsize] [-b priorgain] [-t initialtemp]
+[-T finaltemp] [-l dlt] [-o  n]
+Once the program is running, it will prompt the user for control variables, these are listed below, along with good values to use
+sigma: The std dev of the noise. default 1.0
+r,step size, smaller is more stable but slower. default is 0.02
+b, The coefficient in front of the prior term. Beta of Eq. 6.41 in Snyder and Qi,
+                  good value is .5
+t,   initial temperature. default   2.0
+t2, final temperature default  0.005
+lambda:  rate by which the temperature drops. good value : 0.99
+n: used with the -o switch. The program will output a temporary
+        image every n iterations
+example: plin -i G
+\end{ifsdoc}
+\begin{ifsdoc}[ColorMap]
+7.1 ColorMap
+The program ColorMap allows you to assign a number of different colors to an 8-bit,
+unsigned image. That is, each of the possible 256 brightness levels will be assigned a color.
+There are many ways to assign an R, G, and B value to a single pixel brightness. The
+program offers several different ways to interpret the brightnesses.
+Usage:
+ColorMap -i inputfile.ifs -o outputfile.ifs -m X -f Y
+Where inputfile is an ifs image. and X is an integer between 0 and 6 which tells the program
+which color map to use:
+0 grey scale
+1 inverse gray scale
+2 bronson
+3 hot metal
+4 heated spectrum
+5 log
+6 random
+The input image may be any ifs format, however, if it is not unsigned 8 bit, the user will
+get a warning message that only brightnesses between 0 and 255 will be mapped. If the user
+has this problem, he or she should probably usevidscaleto convert the darkest-brightest
+values to 0-255.
+Should the input file be 3D, the program will convert frame 0 by default. Using the -f
+switch, the frame to be converted can be selected.
+The output file will the 3 D ifs image, with 3 frames, with the usual interpretation that
+frame 0 is red, frame 1 is green, and frame 2 is blue.
+\end{ifsdoc}
