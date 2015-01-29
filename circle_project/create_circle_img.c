@@ -7,9 +7,7 @@ int in_circle(int r, int x, int y);
 main() {
 	IFSIMG img1; /*Declare pointers to headers */
 	int len[3]; /*len is an array of dimensions, used by ifscreate*/
-	int threshold;/*threshold is an int here */ 
 	int row,col;/*counters */
-	int v; 
 	int m = 64;/*image has 64 columns */ 
 	int n = 64;/*image has 64 rows */
 	int b = 10; /*black border offset */
@@ -20,7 +18,6 @@ main() {
 	len[2]=m; 
 	
 	img1=ifscreate("u8bit" ,len, IFS_CR_ALL,0) ;/*image is unsigned 8bit */
-	threshold=55;/*set some value to threshold */
 	
 	/*Black background */
 	for(row=0;row< m;row++) 
@@ -54,7 +51,7 @@ main() {
 		} 
 
 	/*Down Right Quad = 20 */	
-	for(row=m/n;row< m-b;row++) 
+	for(row=m/2;row< m-b;row++) 
 		for(col=n/2;col< n-b;col++)
 		{
 			if(in_circle(radius, row, col))
@@ -62,7 +59,7 @@ main() {
 		} 
 
 		
-	ifspot(img1,"img1.ifs"); /*write image 2 to disk */
+	ifspot(img1,"SYNTH1.ifs"); /*write image 2 to disk */
 }
 
 /* 1 if point inside circle, 0 if not 
