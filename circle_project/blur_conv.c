@@ -68,14 +68,9 @@ int blur(IFSIMG img, int x, int y)
 			
 			if( (i==0)&&(j==0))
 				total = total + temp;
-			
-				if( (x<2)&&(y<2))
-					printf("%d %d  %d   %d\n",ic, jc, temp, total);
+
 		}
 	total = (int)total/10;
-	
-	//if( (x<5)&&(y<5))
-	//	printf("%d\n",total);
 	return total;		
 }
 
