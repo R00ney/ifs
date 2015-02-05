@@ -2,11 +2,10 @@
 
 #include<stdio.h> 
 #include "../Linux64/hdr/ifs.h"
-//#include <ifs.h>
 
 int blur(IFSIMG img, int x, int y);
 
-int main(void) {
+main() {
 	IFSIMG img1, img2; /*Declare pointers to headers */
 	int len[3]; /*len is an array of dimensions, used by ifscreate*/
 	int row,col;/*counters */
@@ -32,7 +31,6 @@ int main(void) {
 		} 
 
 	ifspot(img1,"BLUR1."); /*write  blur image to disk */
-	return 1;
 }
 
 
